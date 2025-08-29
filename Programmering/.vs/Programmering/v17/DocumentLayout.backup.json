@@ -1,10 +1,9 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\24TE_INF\\source\\repos\\Programmering\\",
+  "WorkspaceRootPath": "C:\\Users\\24TE_INF\\Documents\\GitHub\\Programmering\\Programmering\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{7DAB788F-E8AA-4B2A-A31B-3E3016CA0ADB}|Programmering\\Programmering.csproj|c:\\users\\24te_inf\\source\\repos\\programmering\\programmering\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{7DAB788F-E8AA-4B2A-A31B-3E3016CA0ADB}|Programmering\\Programmering.csproj|solutionrelative:programmering\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\24TE_INF\\source\\repos\\Programmering\\Programmering\\Program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -21,13 +20,11 @@
               "DocumentIndex": 0,
               "Title": "Program.cs",
               "DocumentMoniker": "C:\\Users\\24TE_INF\\source\\repos\\Programmering\\Programmering\\Program.cs",
-              "RelativeDocumentMoniker": "Programmering\\Program.cs",
-              "ToolTip": "C:\\Users\\24TE_INF\\source\\repos\\Programmering\\Programmering\\Program.cs*",
-              "RelativeToolTip": "Programmering\\Program.cs*",
-              "ViewState": "AgIAAI8CAAAAAAAAAAAiwFcCAABFAAAAAAAAAA==",
+              "RelativeDocumentMoniker": "..\\..\\..\\..\\source\\repos\\Programmering\\Programmering\\Program.cs",
+              "ToolTip": "C:\\Users\\24TE_INF\\source\\repos\\Programmering\\Programmering\\Program.cs",
+              "RelativeToolTip": "..\\..\\..\\..\\source\\repos\\Programmering\\Programmering\\Program.cs",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-08-25T11:39:31.699Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-08-25T11:39:31.699Z"
             }
           ]
         }

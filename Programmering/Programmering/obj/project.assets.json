@@ -13,11 +13,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\24TE_INF\\source\\repos\\Programmering\\Programmering\\Programmering.csproj",
+      "projectUniqueName": "C:\\Users\\24TE_INF\\Documents\\GitHub\\Programmering\\Programmering\\Programmering\\Programmering.csproj",
       "projectName": "Programmering",
-      "projectPath": "C:\\Users\\24TE_INF\\source\\repos\\Programmering\\Programmering\\Programmering.csproj",
+      "projectPath": "C:\\Users\\24TE_INF\\Documents\\GitHub\\Programmering\\Programmering\\Programmering\\Programmering.csproj",
       "packagesPath": "C:\\Users\\24TE_INF\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\24TE_INF\\source\\repos\\Programmering\\Programmering\\obj\\",
+      "outputPath": "C:\\Users\\24TE_INF\\Documents\\GitHub\\Programmering\\Programmering\\Programmering\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\24TE_INF\\AppData\\Roaming\\NuGet\\NuGet.Config",
