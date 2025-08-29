@@ -662,12 +662,12 @@ namespace Programmering
         }
         static void Winner(int PlayerWin, int ComputerWin)
         {
-            WriteLine("Player Matches won - " + PlayerWin + ". Computer Matches won - " + ComputerWin);
             WriteLine();
             WriteLine("Press enter to play again or type 'exit' to quit!");
             if (Exit()) Environment.Exit(0);
             Clear();
             WriteLine("Reminder: you can type 'exit' to quit at any time!");
+            WriteLine("Player Matches won - " + PlayerWin + ". Computer Matches won - " + ComputerWin);
             WriteLine();
         }
     }
