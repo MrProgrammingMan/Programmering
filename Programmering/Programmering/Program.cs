@@ -516,13 +516,15 @@ namespace Programmering
             // Tärning
 
             Random diceResult = new Random();
-            
+
             int PlayerScore = 0;
             int ComputerScore = 0;
             int PlayerMatchesWon = 0;
             int ComputerMatchesWon = 0;
             int FinalComputerNumber = 0;
             int FinalPlayerNumber = 0;
+            int [] playerDice = new int[2];
+            int[] computerDice = new int[2];
             bool Play = true;
 
             WriteLine("Hello Welcome to Dice Throw! You will be throwing 2 dices every round, the person with the highest dice value wins, best of 3 wins. You may quit by typing 'Exit'.");
@@ -534,49 +536,23 @@ namespace Programmering
                     WriteLine("Press enter to roll your dices.");
                     if (Exit()) return;
 
-                    int PlayerDice1 = diceResult.Next(1, 7);
-                    int PlayerDice2 = diceResult.Next(1, 7);
-                    int ComputerDice1 = diceResult.Next(1, 7);
-                    int ComputerDice2 = diceResult.Next(1, 7);
-                    if (PlayerDice1 > PlayerDice2)
-                    {
-                        FinalPlayerNumber = PlayerDice1;
-                    }
-                    else
-                    {
-                        FinalPlayerNumber = PlayerDice2;
-                    }
-                    if (ComputerDice1 > ComputerDice2)
-                    {
-                        FinalComputerNumber = ComputerDice1;
-                    }
-                    else
-                    {
-                        FinalComputerNumber = ComputerDice2;
-                    }
+                    RollDice(playerDice, computerDice);
+
+                    FinalPlayerNumber = Math.Max(playerDice[0], playerDice[1]);
+                    FinalComputerNumber = Math.Max(computerDice[0], computerDice[1]);
+
                     WriteLine("Your dices:");
-                    Dice(PlayerDice1, PlayerDice2);
-                    if (PlayerDice1 < PlayerDice2)
-                    {
-                        WriteLine($"Your final number is {PlayerDice2}");
-                    }
-                    else
-                    {
-                        WriteLine($"Your final number is {PlayerDice1}");
-                    }
+                    Dice(playerDice[0], playerDice[1]);
+                    WriteLine($"Your final number is {FinalPlayerNumber}");
+
                     WriteLine();
                     WriteLine("Press enter to roll the Computer's dices.");
                     if (Exit()) return;
+
                     WriteLine("Computer's Dices:");
-                    Dice(ComputerDice1, ComputerDice2);
-                    if (ComputerDice1 < ComputerDice2)
-                    {
-                        WriteLine($"Computer's final number is {ComputerDice2}");
-                    }
-                    else
-                    {
-                        WriteLine($"Computer's final number is {ComputerDice1}");
-                    }
+                    Dice(computerDice[0], computerDice[1]);
+                    WriteLine($"The Computer's final number is {FinalComputerNumber}");
+
                     WriteLine();
                     if (FinalPlayerNumber > FinalComputerNumber)
                     {
@@ -592,6 +568,7 @@ namespace Programmering
                     {
                         WriteLine($"It's a tie!");
                     }
+
                     if (PlayerScore == 2)
                     {
                         Play = false;
@@ -615,10 +592,10 @@ namespace Programmering
                 }
             }
 
-          
-                
-            
-            
+
+
+
+
 
 
 
@@ -643,7 +620,7 @@ namespace Programmering
 
             ReadLine();
             /////////////////////////////////////////////////////////////////////
-            /// Skriv aldig något under denna rad
+            /// Skriv aldig nÃ¥got under denna rad
         }
 
         static bool Exit()
@@ -669,6 +646,14 @@ namespace Programmering
             WriteLine("Reminder: you can type 'exit' to quit at any time!");
             WriteLine("Player Matches won - " + PlayerWin + ". Computer Matches won - " + ComputerWin);
             WriteLine();
+        }
+        static void RollDice(int[] playDice, int[] comDice)
+        {
+            Random random = new Random();
+            playDice[0] = random.Next(1, 7);
+            playDice[1] = random.Next(1, 7);
+            comDice[0] = random.Next(1, 7);
+            comDice[1] = random.Next(1, 7);
         }
     }
 }
