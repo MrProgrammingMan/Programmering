@@ -514,25 +514,45 @@ namespace Programmering
             }
             */
 
+            /*
+            int i = 0;
+
+            while (i != 51)
+            {
+                WriteLine($"Nu är vi på varv: {i}");
+                WriteLine("");
+                i++;
+            }
+            */
+
             // Tärning
 
+            int Money = 1000;
             int PlayerScore = 0;
             int ComputerScore = 0;
             int PlayerMatchesWon = 0;
             int ComputerMatchesWon = 0;
             int FinalComputerNumber = 0;
             int FinalPlayerNumber = 0;
+            int betAmount = 0;
             int [] playerDice = new int[2];
             int[] computerDice = new int[2];
+            bool hasBet = false;
             bool chosen = false;
-            bool d6 = false;
-            bool d20 = false;
+            bool isD6Chosen = false;
+            bool isD20Chosen = false;
             bool Play = true;
 
             WriteLine("Hello Welcome to Dice Throw! You will be throwing 2 dices every round, the person with the highest dice value wins, best of 3 wins. You may quit by typing 'Exit'.");
             WriteLine("");
+
             WriteLine("Do you wish to use a 'd6' dice or 'd20' dice?");
-            diceChoice(ref d6, ref d20, ref chosen);
+            diceChoice(ref isD6Chosen, ref isD20Chosen, ref chosen);
+            WriteLine("");
+
+            WriteLine($"How much do you want to bet? 100, 300 or 500 kr? You currently own {Money} kr");
+            betMoney(ref Money, ref hasBet, ref betAmount);
+            WriteLine("");
             while (Play)
             {
                 while (PlayerScore != 3 && ComputerScore != 3)
@@ -541,11 +561,11 @@ namespace Programmering
                     WriteLine("Press enter to roll your dices.");
                     if (Exit()) return;
 
-                    if (d6 == true)
+                    if (isD6Chosen == true)
                     {
                         Rolld6(playerDice, computerDice);
                     }
-                    else if (d20 == true)
+                    else if (isD20Chosen == true)
                     {
                         Rolld20(playerDice, computerDice);
                     }
@@ -585,11 +605,20 @@ namespace Programmering
                     {
                         Play = false;
                         WriteLine("You won the match!");
+                        if (hasBet == true)
+                        {
+                            WriteLine($"Your bet of {betAmount} has been doubled!");
+                            betAmount += betAmount;
+                            hasBet = false;
+                        }
                         PlayerMatchesWon++;
                         Winner(PlayerMatchesWon, ComputerMatchesWon);
                         Play = true;
                         PlayerScore = 0;
                         ComputerScore = 0;
+                        WriteLine($"How much do you want to bet? 100, 300 or 500 kr? You currently own {Money} kr");
+                        betMoney(ref Money, ref hasBet, ref betAmount);
+                        WriteLine("");
                     }
                     else if (ComputerScore == 2)
                     {
@@ -600,9 +629,14 @@ namespace Programmering
                         Play = true;
                         PlayerScore = 0;
                         ComputerScore = 0;
+                        hasBet = false;
+                        WriteLine($"How much do you want to bet? 100, 300 or 500 kr? You currently own {Money} kr");
+                        betMoney(ref Money, ref hasBet, ref betAmount);
+                        WriteLine("");
                     }
                 }
             }
+            
 
 
 
@@ -643,6 +677,42 @@ namespace Programmering
             }
 
             return false;
+        }
+        static void betMoney(ref int Money, ref bool hasBet, ref int betAmount)
+        {
+            while (!int.TryParse(ReadLine(), out betAmount))
+            {
+                WriteLine("You did not input a valid number, please input either 100, 300 or 500 kr");
+            }
+            while (hasBet == false)
+            {
+                if (betAmount == 100)
+                {
+                    WriteLine("Your bet of '100 kr' is successful");
+                    Money -= 100;
+                    WriteLine($"You now have {Money} kr");
+                    hasBet = true;
+                }
+                else if (betAmount == 300)
+                {
+                    WriteLine("Your bet of '300 kr' is successful");
+                    Money -= 300;
+                    WriteLine($"You now have {Money} kr");
+                    hasBet = true;
+                }
+                else if (betAmount == 500)
+                {
+                    WriteLine("Your bet of '500 kr' is successful");
+                    Money -= 500;
+                    WriteLine($"You now have {Money} kr");
+                    hasBet = true;
+                }
+                else if (betAmount >= 100)
+                {
+                    WriteLine("You do not own more than 100 kr, You are unable to bet.");
+                    break;
+                }
+            }   
         }
         static void diceChoice(ref bool d6, ref bool d20, ref bool chosen)
         {
