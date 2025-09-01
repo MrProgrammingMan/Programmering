@@ -1,4 +1,5 @@
-﻿using static System.Console;
+﻿using System;
+using static System.Console;
 namespace Programmering
 {
     internal class Program
@@ -515,8 +516,6 @@ namespace Programmering
 
             // Tärning
 
-            Random diceResult = new Random();
-
             int PlayerScore = 0;
             int ComputerScore = 0;
             int PlayerMatchesWon = 0;
@@ -525,9 +524,15 @@ namespace Programmering
             int FinalPlayerNumber = 0;
             int [] playerDice = new int[2];
             int[] computerDice = new int[2];
+            bool chosen = false;
+            bool d6 = false;
+            bool d20 = false;
             bool Play = true;
 
             WriteLine("Hello Welcome to Dice Throw! You will be throwing 2 dices every round, the person with the highest dice value wins, best of 3 wins. You may quit by typing 'Exit'.");
+            WriteLine("");
+            WriteLine("Do you wish to use a 'd6' dice or 'd20' dice?");
+            diceChoice(ref d6, ref d20, ref chosen);
             while (Play)
             {
                 while (PlayerScore != 3 && ComputerScore != 3)
@@ -536,7 +541,14 @@ namespace Programmering
                     WriteLine("Press enter to roll your dices.");
                     if (Exit()) return;
 
-                    RollDice(playerDice, computerDice);
+                    if (d6 == true)
+                    {
+                        Rolld6(playerDice, computerDice);
+                    }
+                    else if (d20 == true)
+                    {
+                        Rolld20(playerDice, computerDice);
+                    }
 
                     FinalPlayerNumber = Math.Max(playerDice[0], playerDice[1]);
                     FinalComputerNumber = Math.Max(computerDice[0], computerDice[1]);
@@ -632,6 +644,29 @@ namespace Programmering
 
             return false;
         }
+        static void diceChoice(ref bool d6, ref bool d20, ref bool chosen)
+        {
+            while (chosen == false)
+            {
+                string Choice = ReadLine().ToLower();
+                if (Choice == "d6")
+                {
+                    WriteLine("You have chosen a d6 dice.");
+                    d6 = true;
+                    chosen = true;
+                }
+                else if (Choice == "d20")
+                {
+                    WriteLine("You have chosen a d20 dice.");
+                    d20 = true;
+                    chosen = true;
+                }
+                else
+                {
+                    WriteLine("That's not a valid answer, please type 'd6' or 'd20'");
+                }
+            }
+        }
         static void Dice(int Dice1, int Dice2)
         {
             WriteLine($"Dice 1: {Dice1}");
@@ -647,13 +682,21 @@ namespace Programmering
             WriteLine("Player Matches won - " + PlayerWin + ". Computer Matches won - " + ComputerWin);
             WriteLine();
         }
-        static void RollDice(int[] playDice, int[] comDice)
+        static void Rolld6(int[] playDice, int[] comDice)
+        {     
+            Random randomd6 = new Random();
+            playDice[0] = randomd6.Next(1, 7);
+            playDice[1] = randomd6.Next(1, 7);
+            comDice[0] = randomd6.Next(1, 7);    
+            comDice[1] = randomd6.Next(1, 7);
+        }
+        static void Rolld20(int[] playDice, int[] comDice)
         {
-            Random random = new Random();
-            playDice[0] = random.Next(1, 7);
-            playDice[1] = random.Next(1, 7);
-            comDice[0] = random.Next(1, 7);
-            comDice[1] = random.Next(1, 7);
+            Random randomd20 = new Random();
+            playDice[0] = randomd20.Next(1, 21);
+            playDice[1] = randomd20.Next(1, 21);
+            comDice[0] = randomd20.Next(1, 21);
+            comDice[1] = randomd20.Next(1, 21);
         }
     }
 }
