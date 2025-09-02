@@ -527,7 +527,7 @@ namespace Programmering
 
             // Tärning
 
-            int Money = 1000;
+            int Money = 0;
             int PlayerScore = 0;
             int ComputerScore = 0;
             int PlayerMatchesWon = 0;
@@ -535,8 +535,10 @@ namespace Programmering
             int FinalComputerNumber = 0;
             int FinalPlayerNumber = 0;
             int betAmount = 0;
+            int loanAmount = 0;
             int [] playerDice = new int[2];
             int[] computerDice = new int[2];
+            bool hasLoan = false;
             bool hasBet = false;
             bool chosen = false;
             bool isD6Chosen = false;
@@ -549,24 +551,44 @@ namespace Programmering
             WriteLine("Do you wish to use a 'd6' dice or 'd20' dice?");
             diceChoice(ref isD6Chosen, ref isD20Chosen, ref chosen);
             WriteLine("");
+            while (Money > 3000)
+            {
+                if (Money >= 3000)
+                {
+                    WriteLine("You've reached above 3000 and have gone over the maximum amount of money on your account allowed, you will be reset back to 3000 kr");
+                    Money = 3000;
+                }
+                else if (Money >= 100)
+                {
+                    WriteLine($"How much do you want to bet? 100, 300 or 500 kr? You currently own {Money} kr. Maximum amount you can have is 3000 kr");
+                    betMoney(ref Money, ref hasBet, ref betAmount);
+                    WriteLine("");
+                }
+                else if (Money <= 0)
+                {
+                    WriteLine("You do not have enough money to bet, do you wish to take out a loan? You may end up in debt if you cannot pay it back. Otherwise, you will be unable to play");
+                    if (hasLoan = true)
+                    {
+                        WriteLine($"Do you wish to pay back your current loan of {betAmount}? if not, you will be forced to quit. Type Yes or No");
+                        if (ReadLine().ToLower() == "yes")
+                        {
+                            payLoan(ref loanAmount, ref Money);
+                        }
+                        else if (ReadLine().ToLower() == "no")
+                        {
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        Loan(ref Money, ref loanAmount, ref hasLoan);
+                    }
+                }
+            }
             while (Play)
             {
                 while (PlayerScore != 3 && ComputerScore != 3)
                 {
-                    while (Money <= 0)
-                    {
-                        if (Money <= 100)
-                        {
-                            WriteLine($"How much do you want to bet? 100, 300 or 500 kr? You currently own {Money} kr");
-                            betMoney(ref Money, ref hasBet, ref betAmount);
-                            WriteLine("");
-                        }
-                        else if (Money <= 0)
-                        {
-                            WriteLine("You do not have enough money to bet, do you wish to take out a loan? You may end up in debt if you cannot pay it back. Otherwise, you will be unable to play");
-                            Loan(Money);
-                        }
-                    }
                     WriteLine("Player score - " + PlayerScore + ". Computer Score - " + ComputerScore);
                     WriteLine("Press enter to roll your dices.");
                     if (Exit()) return;
@@ -618,7 +640,7 @@ namespace Programmering
                         if (hasBet == true)
                         {
                             WriteLine($"Your bet of {betAmount} has been doubled!");
-                            betAmount += betAmount;
+                            Money += betAmount * 2;
                             hasBet = false;
                         }
                         PlayerMatchesWon++;
@@ -688,9 +710,29 @@ namespace Programmering
 
             return false;
         }
-        static void Loan(int Money)
+        static void Loan(ref int Money, ref int loanAmount, ref bool hasLoan)
         {
             WriteLine("How much money do you want to loan? it can only be between 100 - 1000 and it must be an even hundred number such as 200, 300, 400 etc.");
+            if (loanAmount >= 1 && loanAmount <= 1000)
+            {
+                Money += loanAmount;
+                WriteLine($"Congrats you now have {Money}");
+                hasLoan = true;
+            }
+        }
+        static void payLoan(ref int loanAmount, ref int Money)
+        {
+            int payBack = 0;
+            WriteLine($"Please pay back your loan of {loanAmount}");
+            while (!int.TryParse(ReadLine(), out payBack))
+            {
+                WriteLine($"You did not input a valid number, please input {loanAmount}");
+            }
+            if (payBack == loanAmount)
+            {
+                WriteLine("Congrats, you've paid back your loan!");
+                loanAmount = 0;
+            }
         }
         static void betMoney(ref int Money, ref bool hasBet, ref int betAmount)
         {
@@ -721,9 +763,9 @@ namespace Programmering
                     WriteLine($"You now have {Money} kr");
                     hasBet = true;
                 }
-                else if (betAmount >= 100)
+                else
                 {
-                    WriteLine("You do not own more than 100 kr, You are unable to bet.");
+                    WriteLine("That's an invalid bet amount, please choose either 100, 300 or 500");
                     break;
                 }
             }   
