@@ -549,28 +549,24 @@ namespace Programmering
             WriteLine("Do you wish to use a 'd6' dice or 'd20' dice?");
             diceChoice(ref isD6Chosen, ref isD20Chosen, ref chosen);
             WriteLine("");
-            while (Money <= 100)
-            {
-                if (Money <= 100)
-                {
-                    WriteLine($"How much do you want to bet? 100, 300 or 500 kr? You currently own {Money} kr");
-                    betMoney(ref Money, ref hasBet, ref betAmount);
-                    WriteLine("");
-                }
-                else if (Money <= 0)
-                {
-                    WriteLine("You do not have enough money to bet, do you wish to take out a loan? You may end up in debt if you cannot pay it back. Otherwise, you will be unable to play");
-                    Loan(Money);
-                }
-                else
-                {
-                    return;
-                }
-            }
             while (Play)
             {
                 while (PlayerScore != 3 && ComputerScore != 3)
                 {
+                    while (Money <= 0)
+                    {
+                        if (Money <= 100)
+                        {
+                            WriteLine($"How much do you want to bet? 100, 300 or 500 kr? You currently own {Money} kr");
+                            betMoney(ref Money, ref hasBet, ref betAmount);
+                            WriteLine("");
+                        }
+                        else if (Money <= 0)
+                        {
+                            WriteLine("You do not have enough money to bet, do you wish to take out a loan? You may end up in debt if you cannot pay it back. Otherwise, you will be unable to play");
+                            Loan(Money);
+                        }
+                    }
                     WriteLine("Player score - " + PlayerScore + ". Computer Score - " + ComputerScore);
                     WriteLine("Press enter to roll your dices.");
                     if (Exit()) return;
@@ -695,7 +691,6 @@ namespace Programmering
         static void Loan(int Money)
         {
             WriteLine("How much money do you want to loan? it can only be between 100 - 1000 and it must be an even hundred number such as 200, 300, 400 etc.");
-
         }
         static void betMoney(ref int Money, ref bool hasBet, ref int betAmount)
         {
