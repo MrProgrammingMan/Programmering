@@ -825,7 +825,7 @@ namespace Programmering
                 if (loanAmount > 0)
                 {
                     WriteLine("");
-                    WriteLine($"You are still {loanAmount} kr in debt. Do you wish to pay it back now, you current have {Money} kr? (yes or no)");
+                    WriteLine($"You are still {loanAmount} kr in debt. Do you wish to pay it back now, you currently have {Money} kr? (yes or no)");
                     string input = ReadLine().ToLower();
                     if (input == "yes")
                     {
