@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.Design;
 using static System.Console;
 namespace Programmering
 {
@@ -281,7 +282,7 @@ namespace Programmering
              int number;
              int guesses;
              int highScore = int.MaxValue;
-             String response;
+             string response;
 
              while (playAgain)
              {
@@ -293,7 +294,7 @@ namespace Programmering
 
                  while (guess != number)
                  {
-                     guess = Convert.ToInt32(ReadLine());
+                     guess = int.Parse(ReadLine());
                      WriteLine("Guess: " + guess);
 
                      if (guess > number)
@@ -326,6 +327,7 @@ namespace Programmering
                  if (response == "Y")
                  {
                      playAgain = true;
+                     Clear();
                  }
                  else
                  {
@@ -334,7 +336,7 @@ namespace Programmering
 
              }
 
-             WriteLine("Thanks for playing pookie :3333333");
+             WriteLine("Thanks for playing!");
              */
 
             /////////////////////////////////////////////////////////////////////////////////////////
@@ -523,13 +525,14 @@ namespace Programmering
                 WriteLine("");
                 i++;
             }
+
             */
 
-            // Tärning
+
 
             // Tärning
-
-            int Money = 500;
+            
+            int Money = 2000;
             int PlayerScore = 0;
             int ComputerScore = 0;
             int PlayerMatchesWon = 0;
@@ -538,7 +541,7 @@ namespace Programmering
             int FinalPlayerNumber = 0;
             int max = 0;
             int betAmount = 0;
-            int loanAmount = 0;
+            int loanAmount = 1600;
             int[] playerDice = new int[2];
             int[] computerDice = new int[2];
             bool chosen = false;
@@ -637,6 +640,7 @@ namespace Programmering
                     }
                 }
             }
+            
 
 
 
@@ -682,20 +686,24 @@ namespace Programmering
 
         static void Loan(ref int Money, ref int loanAmount, ref int betAmount)
         {
+            WriteLine("You can have a maximum loan of 1500 kr, if you reach higher than that you will go bankrupt and the program will close.");
             WriteLine("");
-            WriteLine("How much money do you want to loan? it can only be between 100 - 1000 and it must be an even hundred number such as 200, 300, 400 etc.");
+            WriteLine("How much money do you want to loan? It can only be between 100 - 1000 and it must be an even hundred number such as 200, 300, 400 etc.");
             while (true)
             {
-                if (!int.TryParse(ReadLine(), out loanAmount))
+                int newLoanAmount;
+                if (!int.TryParse(ReadLine(), out newLoanAmount))
                 {
-                    WriteLine($"You did not input a valid number, try again and remember it must be an even hundreth number such as 100, 200 etc.");
+                    WriteLine($"You did not input a valid number, try again and remember it must be an even hundredth number such as 100, 200 etc.");
                     continue;
                 }
-                if (loanAmount >= 100 && loanAmount <= 1000 && loanAmount % 100 == 0)
+
+                if (newLoanAmount >= 100 && newLoanAmount <= 1000 && newLoanAmount % 100 == 0)
                 {
-                    Money += loanAmount;
-                    WriteLine($"Congrats you now have {Money} kr!");
-                    break;
+                    loanAmount += newLoanAmount;
+                    Money += newLoanAmount;
+
+                    WriteLine($"Congrats! You now have a total loan of {loanAmount} kr and your money is {Money} kr!");
                 }
                 else
                 {
@@ -824,7 +832,35 @@ namespace Programmering
         {
             while (true)
             {
-                if (loanAmount > 0)
+                if (loanAmount >= 1500)
+                {
+                    WriteLine("");
+                    WriteLine("You have however, gone over your loan amount, you have to pay it back now otherwise you will be forced to quit");
+                    WriteLine("");
+                    WriteLine($"You are {loanAmount} kr in debt. Do you wish to pay it back now, you currently have {Money} kr? (yes or no)");
+                    string input = ReadLine().ToLower();
+                    if (input == "yes")
+                    {
+                        payLoan(ref loanAmount, ref Money);
+                        if (loanAmount == 0)
+                        {
+                            WriteLine("");
+                            WriteLine("Congrats you paid back your loan!");
+                            break;
+                        }
+                    }
+                    else if (input == "no")
+                    {
+                        WriteLine("");
+                        WriteLine("Since you did not pay your loan, you have gone bankrupt, Goodbye.");
+                        Environment.Exit(0);
+                    }
+                    else
+                    {
+                        WriteLine("Please type Yes or No.");
+                    }
+                }
+                else if (loanAmount < 1500)
                 {
                     WriteLine("");
                     WriteLine($"You are still {loanAmount} kr in debt. Do you wish to pay it back now, you currently have {Money} kr? (yes or no)");
@@ -843,6 +879,10 @@ namespace Programmering
                     {
                         WriteLine("Please type Yes or No.");
                     }
+                }
+                else
+                {
+                    break;
                 }
             }
         }
