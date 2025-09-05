@@ -532,7 +532,7 @@ namespace Programmering
 
             // Tärning
             
-            int Money = 2000;
+            int Money = 500;
             int PlayerScore = 0;
             int ComputerScore = 0;
             int PlayerMatchesWon = 0;
@@ -541,7 +541,7 @@ namespace Programmering
             int FinalPlayerNumber = 0;
             int max = 0;
             int betAmount = 0;
-            int loanAmount = 1600;
+            int loanAmount = 0;
             int[] playerDice = new int[2];
             int[] computerDice = new int[2];
             bool chosen = false;
@@ -844,8 +844,6 @@ namespace Programmering
                         payLoan(ref loanAmount, ref Money);
                         if (loanAmount == 0)
                         {
-                            WriteLine("");
-                            WriteLine("Congrats you paid back your loan!");
                             break;
                         }
                     }
