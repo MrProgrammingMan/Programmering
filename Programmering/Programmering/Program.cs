@@ -550,39 +550,42 @@ namespace Programmering
 
             WriteLine("Do you wish to use a 'd6' dice or 'd20' dice?");
             diceChoice(ref isD6Chosen, ref isD20Chosen, ref chosen);
+            WriteLine("");
             if (Money > 3000)
             {
-                WriteLine("You've reached above 3000 and have gone over the maximum amount of money on your account allowed, you will be reset back to 3000 kr");
-                Money = 3000;
-            }
-            else if (Money >= 100)
-            {
-                WriteLine($"How much do you want to bet? 100, 300 or 500 kr? You currently own {Money} kr. Maximum amount you can have is 3000 kr");
-                betMoney(ref Money, ref hasBet, ref betAmount);
-                WriteLine("");
-            }
-            else
-            {
-                WriteLine("You do not have enough money to bet, do you wish to take out a loan? You may end up in debt if you cannot pay it back. Otherwise, you will be unable to play");
-                if (hasLoan)
+                if (Money >= 3000)
                 {
-                    WriteLine($"Do you wish to pay back your current loan of {loanAmount}? If not, you will be forced to quit. Type Yes or No");
-                    string input = ReadLine().ToLower();
-                    if (input == "yes")
-                    {
-                        payLoan(ref loanAmount, ref Money);
-                    }
-                    else if (input == "no")
-                    {
-                        return;
-                    }
+                    WriteLine("You've reached above 3000 and have gone over the maximum amount of money on your account allowed, you will be reset back to 3000 kr");
+                    Money = 3000;
+                }
+                else if (Money >= 100)
+                {
+                    WriteLine($"How much do you want to bet? 100, 300 or 500 kr? You currently own {Money} kr. Maximum amount you can have is 3000 kr");
+                    betMoney(ref Money, ref hasBet, ref betAmount);
+                    WriteLine("");
                 }
                 else
                 {
-                    Loan(ref Money, ref loanAmount, ref hasLoan);
+                    WriteLine("You do not have enough money to bet, do you wish to take out a loan? You may end up in debt if you cannot pay it back. Otherwise, you will be unable to play");
+                    if (hasLoan)
+                    {
+                        WriteLine($"Do you wish to pay back your current loan of {betAmount}? if not, you will be forced to quit. Type Yes or No");
+                        string input = ReadLine().ToLower();
+                        if (input == "yes")
+                        {
+                            payLoan(ref loanAmount, ref Money);
+                        }
+                        else if (input == "no")
+                        {
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        Loan(ref Money, ref loanAmount, ref hasLoan);
+                    }
                 }
             }
-        }
             while (Play)
             {
                 while (PlayerScore != 3 && ComputerScore != 3)
