@@ -530,14 +530,7 @@ namespace Programmering
 
 
             // Tärning
-            int number;
 
-            do
-            {
-                Write("Skriv in ett positivty heltal: ");
-                number = int.Parse(ReadLine());
-            } while (number < 0);
-            WriteLine($"Tak! Du skrev: {number}");
             /*
             int Money = 500;
             int PlayerScore = 0;
