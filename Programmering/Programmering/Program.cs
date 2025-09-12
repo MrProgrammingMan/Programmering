@@ -529,9 +529,16 @@ namespace Programmering
             */
 
 
-
             // Tärning
-            
+            int number;
+
+            do
+            {
+                Write("Skriv in ett positivty heltal: ");
+                number = int.Parse(ReadLine());
+            } while (number < 0);
+            WriteLine($"Tak! Du skrev: {number}");
+            /*
             int Money = 500;
             int PlayerScore = 0;
             int ComputerScore = 0;
@@ -640,18 +647,7 @@ namespace Programmering
                     }
                 }
             }
-            
-
-
-
-
-
-
-
-
-
-
-
+            */
 
 
 
@@ -686,6 +682,7 @@ namespace Programmering
 
         static void Loan(ref int Money, ref int loanAmount, ref int betAmount)
         {
+            WriteLine("");
             WriteLine("You can have a maximum loan of 1500 kr, if you reach higher than that you will go bankrupt and the program will close.");
             WriteLine("");
             WriteLine("How much money do you want to loan? It can only be between 100 - 1000 and it must be an even hundred number such as 200, 300, 400 etc.");
@@ -743,25 +740,25 @@ namespace Programmering
             {
                 WriteLine("You do not have enough money to bet, do you wish to take out a loan? You may end up in debt if you cannot pay it back.  Otherwise, you will be unable to play");
                 WriteLine("");
-                WriteLine("Type Yes or No");
+                WriteLine("Click Y/N");
                 while (true)
                 {
-                    string input = ReadLine().ToLower();
+                    char input = ReadKey().KeyChar;
 
-                    if (input == "yes")
+                    if (input == 'y')
                     {
                         Loan(ref Money, ref loanAmount, ref betAmount);
                         betMoney(ref Money, ref betAmount);
                         break;
                     }
-                    else if (input == "no")
+                    else if (input == 'n')
                     {
                         WriteLine("Since you won't bet, you will be forced to quit.");
                         Environment.Exit(0);
                     }
                     else
                     {
-                        WriteLine("Please type Yes or No.");
+                        WriteLine("Please click Y/N.");
                     }
                 }
             }
