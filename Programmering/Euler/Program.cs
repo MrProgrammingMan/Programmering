@@ -19,8 +19,6 @@ internal class Program
         WriteLine(sum);
 
 
-
-
         clock.Stop();
         WriteLine("Tid (ms): " + clock.Elapsed.TotalMilliseconds);
     }
