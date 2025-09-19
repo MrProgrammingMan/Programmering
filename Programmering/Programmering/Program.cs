@@ -531,7 +531,7 @@ namespace Programmering
 
             // Tärning
 
-            /*
+            
             int Money = 500;
             int PlayerScore = 0;
             int ComputerScore = 0;
@@ -640,7 +640,7 @@ namespace Programmering
                     }
                 }
             }
-            */
+            
 
 
 
