@@ -8,15 +8,16 @@ internal class Program
         Stopwatch clock = Stopwatch.StartNew();
 
         int sum = 0;
-
-        for (int i = 1;  i < 1000; i++)
+        int a = 1;
+        for (int i = 1; i < 10; i++)
         {
-            if (i % 3 == 0 || i % 5 == 0)
+            if (a / a - i != 1)
             {
-                sum += i;
+                sum += a;
+                WriteLine(sum);
             }
+            a++;
         }
-        WriteLine(sum);
 
 
         clock.Stop();
