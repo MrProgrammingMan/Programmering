@@ -134,6 +134,7 @@ namespace Tärningsduellen
 
 
 
+            ReadLine();
         }
 
         static bool Exit()

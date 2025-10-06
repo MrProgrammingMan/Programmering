@@ -12,14 +12,12 @@ namespace Yatzy
             {
                 tärningar.Add(rng.Next(0, 10));
             }
-            for (int i = tärningar.Count - 1; i >= 0; i--)
-            {
-                if (tärningar.Contains(1))
-                {
-                    tärningar.Remove(i);
-                }
-                WriteLine(tärningar[i]);
-            }
+            List<int> ettor = new();
+            List<int> tvår = new();
+            List<int> treor = new();
+            List<int> fyror = new();
+            List<int> femmor = new();
+            List<int> sexor = new();
         }
     }
 }
