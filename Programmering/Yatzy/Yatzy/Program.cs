@@ -1,4 +1,4 @@
-﻿using static System.Console;
+using static System.Console;
 using System.Linq;
 namespace Yatzy
 {
@@ -22,6 +22,14 @@ namespace Yatzy
                 List<int> fyror = new();
                 List<int> femmor = new();
                 List<int> sexor = new();
+
+                int tärningRadY = 2;
+                int poängRadY = 4;
+                string utskriftTop = String.Format("|{0,-6}|{1,-6}|{2,-6}|{3,-6}|{4,-6}|{5,-6}", "Ettor", "Tvår", "Treor", "Fyror", "Femmor", "Sexor");
+                WriteLine(utskriftTop);
+                WriteLine("-----------------------------------------");
+                WriteLine("      |      |      |      |      |      ");
+                WriteLine("-----------------------------------------");
 
                 bool rulla = true;
                 while (rulla)
@@ -57,8 +65,6 @@ namespace Yatzy
                                 break;
                         }
                     }
-                    string utskriftTop = String.Format("|{0,-6}|{1,-6}|{2,-6}|{3,-6}|{4,-6}|{5,-6}", "Ettor", "Tvår", "Treor", "Fyror", "Femmor", "Sexor");
-                    string poäng = String.Format("|{0,-6}|{1,-6}|{2,-6}|{3,-6}|{4,-6}|{5,-6}", 1 * ettor.Count + "p", 2 * tvår.Count + "p", 3 * treor.Count + "p", 4 * fyror.Count + "p", 5 * femmor.Count + "p", 6 * sexor.Count + "p");
                     string utskrift = String.Format("|{0,-6}|{1,-6}|{2,-6}|{3,-6}|{4,-6}|{5,-6}",
                     string.Join(",", ettor),
                     string.Join(",", tvår),
@@ -66,22 +72,15 @@ namespace Yatzy
                     string.Join(",", fyror),
                     string.Join(",", femmor),
                     string.Join(",", sexor));
-                    WriteLine(utskriftTop);
-                    WriteLine("-----------------------------------------");
-                    foreach (var item in utskrift)
-                    {
-                        if (item != ' ' && item != '|' && item != ',')
-                        {
-                            Thread.Sleep(600);
-                        }
-                        Write(item);
-                    }
-                    WriteLine("");
-                    WriteLine("-----------------------------------------");
+
+                    string poäng = String.Format("|{0,-6}|{1,-6}|{2,-6}|{3,-6}|{4,-6}|{5,-6}", 1 * ettor.Count + "p", 2 * tvår.Count + "p", 3 * treor.Count + "p", 4 * fyror.Count + "p", 5 * femmor.Count + "p", 6 * sexor.Count + "p");
+
+                    SetCursorPosition(0, tärningRadY);
+                    Write(utskrift);
+                    SetCursorPosition(0, poängRadY);
                     WriteLine(poäng);
 
                     rollaOm(ref tärningar, ref spela, rng, ref nuvarandeKast);
-                    spela = true;
                 }
             }
         }
@@ -100,7 +99,7 @@ namespace Yatzy
             while (true)
             {
                 tärningar.Clear();
-                WriteLine("");
+                WriteLine();
                 WriteLine("Vill du kasta om dina tärningar? Du får kasta om max 2 gånger. [Y/N]");
                 char input = char.ToLower(ReadKey().KeyChar);
                 WriteLine("");
@@ -110,13 +109,13 @@ namespace Yatzy
                     if (nuvarandeKast < maxKast)
                     {
                         nuvarandeKast++;
-                        Clear();
                         WriteLine($"Kastar om...");
                         slåTärningar(ref tärningar, rng);
                         break;
                     }
                     else
                     {
+                        WriteLine();
                         WriteLine("Du har redan rollat 2 gånger, du behöver nu välja de nummerna du vill använda: 1, 2, 3, 4, 5, 6");
                         nuvarandeKast = 0;
                         spela = false;
