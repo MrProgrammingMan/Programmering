@@ -1,88 +1,87 @@
-using System;
-using System.Collections;
 using System.Linq;
 using static System.Console;
 namespace Yatzy
 {
     internal class Program
     {
-        const int NUM_DICE = 6;
-        const int MAX_ROLLS = 3;
-        const int ROW_INPUT = 6;
-        const int ROW_DICE = 2;
-        const int ROW_SCORE = 4;
+        const int ANTAL_TÄRNINGAR = 6;
+        const int MAX_KAST = 3;
+        const int RAD_INPUT = 6;
+        const int RAD_TÄRNINGAR = 2;
+        const int RAD_POÄNG = 4;
         static void Main(string[] args)
         {
-            bool play = true;
+            bool spela = true;
             Random rng = new();
-            while (play)
+            while (spela)
             {
-                int currentRoll = 0;
-                List<int> dice = new();
+                int nuvarandeKast = 0;
+                List<int> tärningar = new();
 
-                RollDice(ref dice, rng);
+                slåTärningar(ref tärningar, rng);
 
-                int[] upperSection = new int[6];
-                List<int> ones = new();
-                List<int> twos = new();
-                List<int> threes = new();
-                List<int> fours = new();
-                List<int> fives = new();
-                List<int> sixes = new();
+                int[] övreDelen = new int[6];
+                List<int> ettor = new();
+                List<int> tvår = new();
+                List<int> treor = new();
+                List<int> fyror = new();
+                List<int> femmor = new();
+                List<int> sexor = new();
 
-                DrawScoreTable();
+                RitaPoängTabell();
 
                 bool rolling = true;
                 while (rolling)
                 {
-                    ones.Clear();
-                    twos.Clear();
-                    threes.Clear();
-                    fours.Clear();
-                    fives.Clear();
-                    sixes.Clear();
+                    ettor.Clear();
+                    tvår.Clear();
+                    treor.Clear();
+                    fyror.Clear();
+                    femmor.Clear();
+                    sexor.Clear();
 
-                    for (int i = 0; i < NUM_DICE; i++)
+                    for (int i = 0; i < ANTAL_TÄRNINGAR; i++)
                     {
-                        switch (dice[i])
+                        switch (tärningar[i])
                         {
                             case 1:
-                                ones.Add(dice[i]);
+                                ettor.Add(tärningar[i]);
                                 break;
                             case 2:
-                                twos.Add(dice[i]);
+                                tvår.Add(tärningar[i]);
                                 break;
                             case 3:
-                                threes.Add(dice[i]);
+                                treor.Add(tärningar[i]);
                                 break;
                             case 4:
-                                fours.Add(dice[i]);
+                                fyror.Add(tärningar[i]);
                                 break;
                             case 5:
-                                fives.Add(dice[i]);
+                                femmor.Add(tärningar[i]);
                                 break;
                             case 6:
-                                sixes.Add(dice[i]);
+                                sexor.Add(tärningar[i]);
                                 break;
                         }
                     }
 
-                    string display = String.Format("|{0,-6}|{1,-6}|{2,-6}|{3,-6}|{4,-6}|{5,-6}",
-                    string.Join(",", ones),
-                    string.Join(",", twos),
-                    string.Join(",", threes),
-                    string.Join(",", fours),
-                    string.Join(",", fives),
-                    string.Join(",", sixes));
+                    string utskrift = String.Format("|{0,-6}|{1,-6}|{2,-6}|{3,-6}|{4,-6}|{5,-6}",
+                    string.Join(",", ettor),
+                    string.Join(",", tvår),
+                    string.Join(",", treor),
+                    string.Join(",", fyror),
+                    string.Join(",", femmor),
+                    string.Join(",", sexor));
 
-                    string score = String.Format("|{0,-6}|{1,-6}|{2,-6}|{3,-6}|{4,-6}|{5,-6}|", 1 * ones.Count + "p", 2 * twos.Count + "p", 3 * threes.Count + "p", 4 * fours.Count + "p", 5 * fives.Count + "p", 6 * sixes.Count + "p");
+                    string poäng = String.Format("|{0,-6}|{1,-6}|{2,-6}|{3,-6}|{4,-6}|{5,-6}|", 1 * ettor.Count + "p", 2 * tvår.Count + "p", 3 * treor.Count + "p", 4 * fyror.Count + "p", 5 * femmor.Count + "p", 6 * sexor.Count + "p");
 
-                    SetCursorPosition(0, ROW_DICE);
-                    Write(display);
-                    SetCursorPosition(0, ROW_SCORE);
-                    WriteLine(score);
+                    SetCursorPosition(0, RAD_TÄRNINGAR);
+                    Write(utskrift);
+                    SetCursorPosition(0, RAD_POÄNG);
+                    WriteLine(poäng);
 
-                    rolling = Reroll(ref dice, ref currentRoll, rng);
+                    rolling = rollaOm(ref tärningar, ref nuvarandeKast, rng);
+                    spela = false;
                 }
             }
         }
@@ -99,68 +98,65 @@ namespace Yatzy
             }
         }
 
-        static void DrawScoreTable()
+        static void RitaPoängTabell()
         {
-            WriteLine("|Ones  |Twos  |Threes|Fours |Fives |Sixes |");
+            WriteLine("|Ettor |Tvåor |Treor |Fyror |Femmor|Sexor |");
             WriteLine("------------------------------------------");
             WriteLine("|      |      |      |      |      |      |");
             WriteLine("------------------------------------------");
         }
 
-        static void RollDice(ref List<int> dice, Random rng)
+        static void slåTärningar(ref List<int> tärningar, Random rng)
         {
-            dice.Clear();
-            for (int i = 0; i < NUM_DICE; i++)
+            tärningar.Clear();
+            for (int i = 0; i < ANTAL_TÄRNINGAR; i++)
             {
-                dice.Add(rng.Next(1, 7));
+                tärningar.Add(rng.Next(1, 7));
             }
         }
 
-        static bool Reroll(ref List<int> dice, ref int currentRoll, Random rng)
+        static bool rollaOm(ref List<int> tärningar, ref int nuvarandeKast, Random rng)
         {
-
             while (true)
             {
-                if (currentRoll >= MAX_ROLLS)
+                if (nuvarandeKast >= MAX_KAST)
                 {
-                    WriteColour("You have already rolled 2 times, now choose which numbers you want to use: 1, 2, 3, 4, 5, 6", ConsoleColor.Red, 2);
-                    WriteColour("WORK IN PROGRESS, NOT FINISHED YET", ConsoleColor.Red);
-                    currentRoll = 0;
+                    WriteColour("Du har redan rollat 3 gånger, du behöver nu välja de nummerna du vill använda: 1, 2, 3, 4, 5, 6", ConsoleColor.Blue, 2);
+                    WriteColour("WORK IN PROGRESS, INTE KLAR ÄN", ConsoleColor.Red);
+                    nuvarandeKast = 0;
                     return false;
                 }
 
-                SetCursorPosition(0, ROW_INPUT);
-                WriteColour("Do you want to reroll your dice? You can reroll max 3 times. [Y/N]", ConsoleColor.Yellow, 1);
+                SetCursorPosition(0, RAD_INPUT);
+                WriteColour("Vill du kasta om dina tärningar? Du får kasta om max 3 gånger. [Y/N]", ConsoleColor.Yellow, 1);
                 char input = char.ToLower(ReadKey(true).KeyChar);
                 WriteLine();
 
                 if (input == 'y')
                 {
-                    currentRoll++;
-                    ChooseDiceToReroll(ref dice, rng);
+                    nuvarandeKast++;
+                    VäljTärningarAttRolla(ref tärningar, rng);
                     return true;
                 }
                 else if (input == 'n')
                 {
-                    WriteColour("You chose not to reroll, select which numbers you want to keep: 1, 2, 3, 4, 5, 6", ConsoleColor.Blue, 2);
-                    WriteColour("WORK IN PROGRESS, NOT FINISHED YET", ConsoleColor.Red);
-                    currentRoll = 0;
+                    WriteColour("Du valde att inte kasta om, välj vilka nummer du villa ha: 1, 2, 3, 4, 5, 6", ConsoleColor.Blue, 2);
+                    WriteColour("WORK IN PROGRESS, INTE KLAR ÄN", ConsoleColor.Red);
+                    nuvarandeKast = 0;
                     return false;
                 }
                 else
                 {
-                    WriteColour("Press [Y/N]", ConsoleColor.Red, 1);
+                    WriteColour("Tryck på [Y/N]", ConsoleColor.Red, 1);
                 }
             }
         }
 
-        static void ChooseDiceToReroll(ref List<int> dice, Random rng)
+        static void VäljTärningarAttRolla(ref List<int> tärningar, Random rng)
         {
-
-            WriteColour("Type the numbers 1-5 depending on which dice you want to reroll (separated by commas e.g. 1,3,6)", ConsoleColor.Yellow, 2);
-            WriteColour($"Current dice: ", ConsoleColor.Yellow);
-            WriteColour($"{string.Join(", ", dice)}", ConsoleColor.Cyan, 1);
-
+            WriteColour("Skriv siffrorna 1-5 beroende på vilken av tärningarna du vill rolla om? (seperade med kommatecken t.ex 1,3,6)", ConsoleColor.Yellow, 2);
+            WriteColour($"Nuvarande tärningar: ", ConsoleColor.Yellow);
+            WriteColour($"{string.Join(", ", tärningar)}", ConsoleColor.Cyan, 1);
 
             while (true)
             {
@@ -168,51 +164,52 @@ namespace Yatzy
 
                 if (string.IsNullOrWhiteSpace(input))
                 {
-                    WriteColour("You did not reroll any dice, remember it is e.g. 1,3,4", ConsoleColor.Red, 1);
+                    WriteColour("Du slog inte om några tärningar, kom ihåg det är t.ex 1,3,4", ConsoleColor.Red, 1);
                 }
 
                 string[] reroll = input.Split(',');
-                List<string> invalidChoices = new List<string>();
-                bool allValid = true;
+                List<string> ogiltigaVal = new List<string>();
+                bool allaGiltiga = true;
 
                 foreach (var die in reroll)
                 {
-                    if (int.TryParse(die, out int index) && index >= 1 && index <= NUM_DICE)
+                    if (int.TryParse(die, out int index) && index >= 1 && index <= ANTAL_TÄRNINGAR)
                     {
-                        dice[index - 1] = rng.Next(1, 7);
+                        tärningar[index - 1] = rng.Next(1, 7);
                     }
                     else
                     {
-                        invalidChoices.Add(die);
-                        allValid = false;
+                        ogiltigaVal.Add(die);
+                        allaGiltiga = false;
                     }
                 }
-                if (invalidChoices.Count > 0)
+
+                if (ogiltigaVal.Count > 0)
                 {
-                    WriteColour($"Invalid choices: {string.Join(", ", invalidChoices)}", ConsoleColor.Red, 2);
+                    WriteColour($"Ogiltiga val: {string.Join(", ", ogiltigaVal)}", ConsoleColor.Red, 2);
                 }
 
-                if (allValid)
+                if (allaGiltiga)
                 {
                     break;
                 }
                 else
                 {
-                    WriteColour("You must enter numbers between 1-6.", ConsoleColor.Red, 1);
+                    WriteColour("Du måste skriva nummer mellan 1-6.", ConsoleColor.Red, 1);
                 }
             }
 
-            WriteColour("New dice: ", ConsoleColor.Yellow);
-            WriteColour(string.Join(", ", dice), ConsoleColor.Cyan, 2);
-            WriteColour("Updating table...", ConsoleColor.Red);
+            WriteColour("Nya tärningar: ", ConsoleColor.Yellow);
+            WriteColour(string.Join(", ", tärningar), ConsoleColor.Cyan, 2);
+            WriteColour("Uppdaterar tabell...", ConsoleColor.Red);
             Thread.Sleep(3000);
-            ShowNewDice();
+            VisaNyaTärningar();
 
         }
-        static void ShowNewDice()
+        static void VisaNyaTärningar()
         {
             Clear();
-            DrawScoreTable();
+            RitaPoängTabell();
         }
     }
 }
