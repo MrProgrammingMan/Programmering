@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 ﻿using System.Linq;
+=======
+using System.Linq;
+>>>>>>> eda2a934c8bd2580e7237f2d214af1ab1370f41e
 using static System.Console;
 namespace Yatzy
 {
@@ -8,12 +12,16 @@ namespace Yatzy
         const int MAX_KAST = 3;
         const int RAD_INPUT = 6;
         const int RAD_TÄRNINGAR = 2;
+<<<<<<< HEAD
         const int ANTAL_RUNDOR = 6;
+=======
+>>>>>>> eda2a934c8bd2580e7237f2d214af1ab1370f41e
         const int RAD_POÄNG = 4;
         static void Main(string[] args)
         {
             bool spela = true;
             Random rng = new();
+<<<<<<< HEAD
             int nuvarandeKast = 0;
             int nuvarandeRunda = 0;
             int antalLåsta = 0;
@@ -31,6 +39,14 @@ namespace Yatzy
                 {
                     SlåTärningar(ref tärningar, ref låsta, rng);
                 }
+=======
+            while (spela)
+            {
+                int nuvarandeKast = 0;
+                List<int> tärningar = new();
+
+                slåTärningar(ref tärningar, rng);
+>>>>>>> eda2a934c8bd2580e7237f2d214af1ab1370f41e
 
                 int[] övreDelen = new int[6];
                 List<int> ettor = new();
@@ -82,7 +98,10 @@ namespace Yatzy
                         }
                     }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> eda2a934c8bd2580e7237f2d214af1ab1370f41e
                     string utskrift = String.Format("|{0,-6}|{1,-6}|{2,-6}|{3,-6}|{4,-6}|{5,-6}",
                     string.Join(",", ettor),
                     string.Join(",", tvår),
@@ -98,12 +117,25 @@ namespace Yatzy
                     SetCursorPosition(0, RAD_POÄNG);
                     WriteLine(poäng);
 
+<<<<<<< HEAD
                     rolling = RollaOm(ref tärningar, ref nuvarandeKast, rng, ref antalLåsta, ref nuvarandeRunda, ref låsta);
+=======
+                    rolling = rollaOm(ref tärningar, ref nuvarandeKast, rng);
+                    spela = false;
+>>>>>>> eda2a934c8bd2580e7237f2d214af1ab1370f41e
                 }
             }
         }
 
         public static void WriteColour(string text, ConsoleColor colour = ConsoleColor.White, int breaks = 0)
+<<<<<<< HEAD
+        {
+            ForegroundColor = colour;
+            Write(text);
+            ResetColor();
+
+            for (int i = 0; i < breaks; i++)
+=======
         {
             ForegroundColor = colour;
             Write(text);
@@ -114,6 +146,25 @@ namespace Yatzy
                 WriteLine();
             }
         }
+
+        static void RitaPoängTabell()
+        {
+            WriteLine("|Ettor |Tvåor |Treor |Fyror |Femmor|Sexor |");
+            WriteLine("------------------------------------------");
+            WriteLine("|      |      |      |      |      |      |");
+            WriteLine("------------------------------------------");
+        }
+
+        static void slåTärningar(ref List<int> tärningar, Random rng)
+        {
+            tärningar.Clear();
+            for (int i = 0; i < ANTAL_TÄRNINGAR; i++)
+>>>>>>> eda2a934c8bd2580e7237f2d214af1ab1370f41e
+            {
+                WriteLine();
+            }
+        }
+<<<<<<< HEAD
 
         static void RitaPoängTabell()
         {
@@ -258,6 +309,73 @@ namespace Yatzy
                     }
                     else
                     {
+=======
+
+        static bool rollaOm(ref List<int> tärningar, ref int nuvarandeKast, Random rng)
+        {
+            while (true)
+            {
+                if (nuvarandeKast >= MAX_KAST)
+                {
+                    WriteColour("Du har redan rollat 3 gånger, du behöver nu välja de nummerna du vill använda: 1, 2, 3, 4, 5, 6", ConsoleColor.Blue, 2);
+                    WriteColour("WORK IN PROGRESS, INTE KLAR ÄN", ConsoleColor.Red);
+                    nuvarandeKast = 0;
+                    return false;
+                }
+
+                SetCursorPosition(0, RAD_INPUT);
+                WriteColour("Vill du kasta om dina tärningar? Du får kasta om max 3 gånger. [Y/N]", ConsoleColor.Yellow, 1);
+                char input = char.ToLower(ReadKey(true).KeyChar);
+                WriteLine();
+
+                if (input == 'y')
+                {
+                    nuvarandeKast++;
+                    VäljTärningarAttRolla(ref tärningar, rng);
+                    return true;
+                }
+                else if (input == 'n')
+                {
+                    WriteColour("Du valde att inte kasta om, välj vilka nummer du villa ha: 1, 2, 3, 4, 5, 6", ConsoleColor.Blue, 2);
+                    WriteColour("WORK IN PROGRESS, INTE KLAR ÄN", ConsoleColor.Red);
+                    nuvarandeKast = 0;
+                    return false;
+                }
+                else
+                {
+                    WriteColour("Tryck på [Y/N]", ConsoleColor.Red, 1);
+                }
+            }
+        }
+
+        static void VäljTärningarAttRolla(ref List<int> tärningar, Random rng)
+        {
+            WriteColour("Skriv siffrorna 1-5 beroende på vilken av tärningarna du vill rolla om? (seperade med kommatecken t.ex 1,3,6)", ConsoleColor.Yellow, 2);
+            WriteColour($"Nuvarande tärningar: ", ConsoleColor.Yellow);
+            WriteColour($"{string.Join(", ", tärningar)}", ConsoleColor.Cyan, 1);
+
+            while (true)
+            {
+                string input = ReadLine();
+
+                if (string.IsNullOrWhiteSpace(input))
+                {
+                    WriteColour("Du slog inte om några tärningar, kom ihåg det är t.ex 1,3,4", ConsoleColor.Red, 1);
+                }
+
+                string[] reroll = input.Split(',');
+                List<string> ogiltigaVal = new List<string>();
+                bool allaGiltiga = true;
+
+                foreach (var die in reroll)
+                {
+                    if (int.TryParse(die, out int index) && index >= 1 && index <= ANTAL_TÄRNINGAR)
+                    {
+                        tärningar[index - 1] = rng.Next(1, 7);
+                    }
+                    else
+                    {
+>>>>>>> eda2a934c8bd2580e7237f2d214af1ab1370f41e
                         ogiltigaVal.Add(die);
                         allaGiltiga = false;
                     }
@@ -279,13 +397,21 @@ namespace Yatzy
             }
 
             WriteColour("Nya tärningar: ", ConsoleColor.Yellow);
+<<<<<<< HEAD
             Thread.Sleep(500);
+=======
+>>>>>>> eda2a934c8bd2580e7237f2d214af1ab1370f41e
             WriteColour(string.Join(", ", tärningar), ConsoleColor.Cyan, 2);
             WriteColour("Uppdaterar tabell...", ConsoleColor.Red);
             Thread.Sleep(3000);
             VisaNyaTärningar();
+<<<<<<< HEAD
         }
 
+=======
+
+        }
+>>>>>>> eda2a934c8bd2580e7237f2d214af1ab1370f41e
         static void VisaNyaTärningar()
         {
             Clear();
