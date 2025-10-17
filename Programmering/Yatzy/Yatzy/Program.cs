@@ -45,6 +45,12 @@ namespace Yatzy
                 bool rolling = true;
                 while (rolling)
                 {
+                    ettor.Clear();
+                    tvår.Clear();
+                    treor.Clear();
+                    fyror.Clear();
+                    femmor.Clear();
+                    sexor.Clear();
 
                     for (int i = 0; i < ANTAL_TÄRNINGAR; i++)
                     {
