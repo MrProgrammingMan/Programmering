@@ -20,13 +20,14 @@ namespace Yatzy
             List<int> tärningar = new();
             List<bool> låsta = new();
 
-            for (int i = 0; i < ANTAL_TÄRNINGAR; i++)
-            {
-                låsta.Add(false);
-            }
 
             while (spela)
             {
+                for (int i = 0; i < ANTAL_TÄRNINGAR; i++)
+                {
+                    låsta.Add(false);
+                }
+
                 if (tärningar.Count == 0)
                 {
                     SlåTärningar(ref tärningar, ref låsta, rng);
@@ -138,6 +139,15 @@ namespace Yatzy
             }
         }
 
+        static void ResetLocks(ref List<bool> låsta, ref int antalLåsta)
+        {
+            for (int i = 0; i < låsta.Count; i++)
+            {
+                låsta[i] = false;
+            }
+            antalLåsta = 0;
+        }
+
 
         static void LåsaNummer(ref int nuvarandeRunda, ref List<int> tärningar, ref int antalLåsta, ref List<bool> låsta, Random rng, int nuvarandeKast)
         {
@@ -162,6 +172,7 @@ namespace Yatzy
                     {
                         WriteColour($"Låser {antalLåsta} stycken tärningar med nummer {nummer}...", ConsoleColor.Red, 2);
                         nuvarandeRunda++;
+                        ResetLocks(ref låsta, ref antalLåsta);
                         Thread.Sleep(3000);
                     }
                     else
@@ -174,10 +185,7 @@ namespace Yatzy
                     WriteColour("Du måste skriva in ett nummer mellan 1-6 för att låsa dem", ConsoleColor.Red, 1);
                 }
             }
-            SlåTärningar(ref tärningar, ref låsta, rng);
             VisaNyaTärningar();
-            nuvarandeKast = 0;
-            antalLåsta = 0;
 
         }
 
