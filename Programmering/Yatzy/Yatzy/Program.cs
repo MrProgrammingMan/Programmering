@@ -19,14 +19,12 @@ namespace Yatzy
             int antalLåsta = 0;
             List<int> tärningar = new();
             List<bool> låsta = new();
+            int[] poängTabell = new int[6];
 
 
             while (spela)
             {
-                for (int i = 0; i < ANTAL_TÄRNINGAR; i++)
-                {
-                    låsta.Add(false);
-                }
+låsta = Enumerable.Repeat(false, ANTAL_TÄRNINGAR).ToList();
 
                 if (tärningar.Count == 0)
                 {
@@ -41,7 +39,7 @@ namespace Yatzy
                 List<int> femmor = new();
                 List<int> sexor = new();
 
-                RitaPoängTabell();
+                RitaPoängTabell(ref poängTabell);
 
                 bool rolling = true;
                 while (rolling)
@@ -84,7 +82,7 @@ namespace Yatzy
                     }
 
 
-                    string utskrift = String.Format("|{0,-6}|{1,-6}|{2,-6}|{3,-6}|{4,-6}|{5,-6}",
+                    string utskrift = String.Format("|{0,-6}|{1,-6}|{2,-6}|{3,-6}|{4,-6}|{5,-6}|",
                     string.Join(",", ettor),
                     string.Join(",", tvår),
                     string.Join(",", treor),
@@ -99,7 +97,8 @@ namespace Yatzy
                     SetCursorPosition(0, RAD_POÄNG);
                     WriteLine(poäng);
 
-                    rolling = RollaOm(ref tärningar, ref nuvarandeKast, rng, ref antalLåsta, ref nuvarandeRunda, ref låsta);
+                    rolling = RollaOm(ref tärningar, ref nuvarandeKast, rng, ref antalLåsta, ref nuvarandeRunda, ref låsta, ref poängTabell);
+                    VisaNyaTärningar(ref poängTabell);
                 }
             }
         }
@@ -116,11 +115,11 @@ namespace Yatzy
             }
         }
 
-        static void RitaPoängTabell()
+        static void RitaPoängTabell(ref int[] poängTabell)
         {
-            WriteLine("|Ettor |Tvåor |Treor |Fyror |Femmor|Sexor |");
+            WriteLine($"|Ettor |Tvåor |Treor |Fyror |Femmor|Sexor |");
             WriteLine("------------------------------------------");
-            WriteLine("|      |      |      |      |      |      |");
+            WriteLine();
             WriteLine("------------------------------------------");
         }
 
@@ -139,17 +138,8 @@ namespace Yatzy
             }
         }
 
-        static void ResetLocks(ref List<bool> låsta, ref int antalLåsta)
-        {
-            for (int i = 0; i < låsta.Count; i++)
-            {
-                låsta[i] = false;
-            }
-            antalLåsta = 0;
-        }
 
-
-        static void LåsaNummer(ref int nuvarandeRunda, ref List<int> tärningar, ref int antalLåsta, ref List<bool> låsta, Random rng, int nuvarandeKast)
+        static void LåsaNummer(ref int nuvarandeRunda, ref List<int> tärningar, ref int antalLåsta, ref List<bool> låsta, Random rng, int nuvarandeKast, ref int[] poängTabell)
         {
             if (nuvarandeRunda <= ANTAL_RUNDOR)
             {
@@ -170,9 +160,12 @@ namespace Yatzy
 
                     if (antalLåsta > 0)
                     {
-                        WriteColour($"Låser {antalLåsta} stycken tärningar med nummer {nummer}...", ConsoleColor.Red, 2);
+                        int poängFörDennaKategori = nummer * antalLåsta;
+                        poängTabell[nummer - 1] = poängFörDennaKategori;
+
+                        WriteColour($"Du fick {poängFörDennaKategori} poäng på {nummer}:or", ConsoleColor.Green, 2);
+
                         nuvarandeRunda++;
-                        ResetLocks(ref låsta, ref antalLåsta);
                         Thread.Sleep(3000);
                     }
                     else
@@ -185,19 +178,18 @@ namespace Yatzy
                     WriteColour("Du måste skriva in ett nummer mellan 1-6 för att låsa dem", ConsoleColor.Red, 1);
                 }
             }
-            VisaNyaTärningar();
-
+            VisaNyaTärningar(ref poängTabell);
         }
 
 
-        static bool RollaOm(ref List<int> tärningar, ref int nuvarandeKast, Random rng, ref int antalLåsta, ref int nuvarandeRunda, ref List<bool> låsta)
+        static bool RollaOm(ref List<int> tärningar, ref int nuvarandeKast, Random rng, ref int antalLåsta, ref int nuvarandeRunda, ref List<bool> låsta, ref int[] poängTabell)
         {
             while (true)
             {
                 if (nuvarandeKast >= MAX_KAST)
                 {
                     nuvarandeKast = 0;
-                    LåsaNummer(ref nuvarandeRunda, ref tärningar, ref antalLåsta, ref låsta, rng, nuvarandeKast);
+                    LåsaNummer(ref nuvarandeRunda, ref tärningar, ref antalLåsta, ref låsta, rng, nuvarandeKast, ref poängTabell);
                     return false;
                 }
 
@@ -210,13 +202,13 @@ namespace Yatzy
                 if (input == 'y')
                 {
                     nuvarandeKast++;
-                    VäljTärningarAttRolla(ref tärningar, ref låsta, rng);
+                    VäljTärningarAttRolla(ref tärningar, ref låsta, rng, ref poängTabell);
                     return true;
                 }
                 else if (input == 'n')
                 {
                     nuvarandeKast = 0;
-                    LåsaNummer(ref nuvarandeRunda, ref tärningar, ref antalLåsta, ref låsta, rng, nuvarandeKast);
+                    LåsaNummer(ref nuvarandeRunda, ref tärningar, ref antalLåsta, ref låsta, rng, nuvarandeKast, ref poängTabell);
                     return false;
                 }
                 else
@@ -226,9 +218,9 @@ namespace Yatzy
             }
         }
 
-        static void VäljTärningarAttRolla(ref List<int> tärningar, ref List<bool> låsta, Random rng)
+        static void VäljTärningarAttRolla(ref List<int> tärningar, ref List<bool> låsta, Random rng, ref int[] poängTabell)
         {
-            WriteColour("Skriv siffrorna 1-6 beroende på vilken av tärningarna du vill rolla om? (separerade med kommatecken t.ex 1,3,6)", ConsoleColor.Yellow, 2);
+            WriteColour("Skriv siffrorna 1-6 beroende på vilken av tärningarna du vill kasta om? (separerade med kommatecken t.ex 1,3,6)", ConsoleColor.Yellow, 2);
             WriteColour($"Nuvarande tärningar: ", ConsoleColor.Yellow);
             WriteColour($"{string.Join(", ", tärningar)}", ConsoleColor.Cyan, 1);
 
@@ -238,47 +230,50 @@ namespace Yatzy
 
                 if (string.IsNullOrWhiteSpace(input))
                 {
-                    WriteColour("Du slog inte om några tärningar, kom ihåg det är t.ex 1,3,4", ConsoleColor.Red, 1);
-                    continue; 
+                    WriteColour("Du kastade inte om några tärningar, kom ihåg att skriva t.ex 1,3,4", ConsoleColor.Red, 1);
+                    continue;
                 }
 
-                string[] reroll = input.Split(',');
-                List<string> ogiltigaVal = new List<string>();
-                bool allaGiltiga = true;
+                var giltigaTärningar = new List<int>();
+                var ogiltigaVal = new List<string>();
 
-                foreach (var die in reroll)
+                foreach (var die in input.Split(','))
                 {
                     if (int.TryParse(die.Trim(), out int index) && index >= 1 && index <= ANTAL_TÄRNINGAR)
                     {
-                        if (!låsta[index - 1])
+                        if (låsta[index - 1])
                         {
-                            tärningar[index - 1] = rng.Next(1, 7);
+                            WriteColour($"Tärning {index} är låst och kan inte kastas om.", ConsoleColor.Red, 1);
                         }
                         else
                         {
-                            WriteColour($"Tärning {index} är låst och kan inte kastas om.", ConsoleColor.Red, 1);
+                            giltigaTärningar.Add(index - 1);
                         }
                     }
                     else
                     {
                         ogiltigaVal.Add(die);
-                        allaGiltiga = false;
                     }
                 }
 
                 if (ogiltigaVal.Count > 0)
                 {
                     WriteColour($"Ogiltiga val: {string.Join(", ", ogiltigaVal)}", ConsoleColor.Red, 2);
+                    continue;
                 }
 
-                if (allaGiltiga)
+                if (giltigaTärningar.Count == 0)
                 {
-                    break;
+                    WriteColour("Inga giltiga tärningar att kasta om.", ConsoleColor.Red, 1);
+                    continue;
                 }
-                else
+
+                foreach (var die in giltigaTärningar)
                 {
-                    WriteColour("Du måste skriva nummer mellan 1-6.", ConsoleColor.Red, 1);
+                    tärningar[die] = rng.Next(1, 7);
                 }
+
+                break;
             }
 
             WriteColour("Nya tärningar: ", ConsoleColor.Yellow);
@@ -286,13 +281,13 @@ namespace Yatzy
             WriteColour(string.Join(", ", tärningar), ConsoleColor.Cyan, 2);
             WriteColour("Uppdaterar tabell...", ConsoleColor.Red);
             Thread.Sleep(3000);
-            VisaNyaTärningar();
         }
 
-        static void VisaNyaTärningar()
+
+        static void VisaNyaTärningar(ref int[] poängTabell)
         {
             Clear();
-            RitaPoängTabell();
+            RitaPoängTabell(ref poängTabell);
         }
     }
 }
