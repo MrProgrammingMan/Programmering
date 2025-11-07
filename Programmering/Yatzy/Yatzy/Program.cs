@@ -1,9 +1,5 @@
-﻿using System;
-using System.Linq;
-using System.Collections.Generic;
-using System.Threading;
+﻿using System.Linq;
 using static System.Console;
-
 namespace Yatzy
 {
     internal class Program
@@ -14,7 +10,6 @@ namespace Yatzy
         const int RAD_TÄRNINGAR = 2;
         const int ANTAL_RUNDOR = 6;
         const int RAD_POÄNG = 4;
-
         static void Main(string[] args)
         {
             bool spela = true;
@@ -26,36 +21,76 @@ namespace Yatzy
             List<bool> låsta = new();
             int[] poängTabell = new int[6];
 
+
             while (spela)
             {
-                låsta = Enumerable.Repeat(false, ANTAL_TÄRNINGAR).ToList();
+låsta = Enumerable.Repeat(false, ANTAL_TÄRNINGAR).ToList();
 
-                if (!tärningar.Any())
+                if (tärningar.Count == 0)
+                {
                     SlåTärningar(ref tärningar, ref låsta, rng);
+                }
+
+                int[] övreDelen = new int[6];
+                List<int> ettor = new();
+                List<int> tvår = new();
+                List<int> treor = new();
+                List<int> fyror = new();
+                List<int> femmor = new();
+                List<int> sexor = new();
 
                 RitaPoängTabell(ref poängTabell);
 
                 bool rolling = true;
                 while (rolling)
                 {
-                    var grupper = new Dictionary<int, List<int>>()
-                    {
-                        { 1, new List<int>() },
-                        { 2, new List<int>() },
-                        { 3, new List<int>() },
-                        { 4, new List<int>() },
-                        { 5, new List<int>() },
-                        { 6, new List<int>() }
-                    };
+                    ettor.Clear();
+                    tvår.Clear();
+                    treor.Clear();
+                    fyror.Clear();
+                    femmor.Clear();
+                    sexor.Clear();
 
                     for (int i = 0; i < ANTAL_TÄRNINGAR; i++)
                     {
-                        if (!låsta[i])
-                            grupper[tärningar[i]].Add(tärningar[i]);
+                        if (låsta[i])
+                        {
+                            continue;
+                        }
+
+                        switch (tärningar[i])
+                        {
+                            case 1:
+                                ettor.Add(tärningar[i]);
+                                break;
+                            case 2:
+                                tvår.Add(tärningar[i]);
+                                break;
+                            case 3:
+                                treor.Add(tärningar[i]);
+                                break;
+                            case 4:
+                                fyror.Add(tärningar[i]);
+                                break;
+                            case 5:
+                                femmor.Add(tärningar[i]);
+                                break;
+                            case 6:
+                                sexor.Add(tärningar[i]);
+                                break;
+                        }
                     }
 
-                    string utskrift = $"|{string.Join(",", grupper[1]),-6}|{string.Join(",", grupper[2]),-6}|{string.Join(",", grupper[3]),-6}|{string.Join(",", grupper[4]),-6}|{string.Join(",", grupper[5]),-6}|{string.Join(",", grupper[6]),-6}|";
-                    string poäng = $"|{1 * grupper[1].Count}p   |{2 * grupper[2].Count}p   |{3 * grupper[3].Count}p   |{4 * grupper[4].Count}p   |{5 * grupper[5].Count}p   |{6 * grupper[6].Count}p   |";
+
+                    string utskrift = String.Format("|{0,-6}|{1,-6}|{2,-6}|{3,-6}|{4,-6}|{5,-6}|",
+                    string.Join(",", ettor),
+                    string.Join(",", tvår),
+                    string.Join(",", treor),
+                    string.Join(",", fyror),
+                    string.Join(",", femmor),
+                    string.Join(",", sexor));
+
+                    string poäng = String.Format("|{0,-6}|{1,-6}|{2,-6}|{3,-6}|{4,-6}|{5,-6}|", 1 * ettor.Count + "p", 2 * tvår.Count + "p", 3 * treor.Count + "p", 4 * fyror.Count + "p", 5 * femmor.Count + "p", 6 * sexor.Count + "p");
 
                     SetCursorPosition(0, RAD_TÄRNINGAR);
                     Write(utskrift);
@@ -73,13 +108,16 @@ namespace Yatzy
             ForegroundColor = colour;
             Write(text);
             ResetColor();
+
             for (int i = 0; i < breaks; i++)
+            {
                 WriteLine();
+            }
         }
 
         static void RitaPoängTabell(ref int[] poängTabell)
         {
-            WriteLine("|Ettor |Tvåor |Treor |Fyror |Femmor|Sexor |");
+            WriteLine($"|Ettor |Tvåor |Treor |Fyror |Femmor|Sexor |");
             WriteLine("------------------------------------------");
             WriteLine();
             WriteLine("------------------------------------------");
@@ -90,52 +128,59 @@ namespace Yatzy
             for (int i = 0; i < ANTAL_TÄRNINGAR; i++)
             {
                 if (tärningar.Count <= i)
+                {
                     tärningar.Add(rng.Next(1, 7));
+                }
                 else if (!låsta[i])
+                {
                     tärningar[i] = rng.Next(1, 7);
+                }
             }
         }
+
 
         static void LåsaNummer(ref int nuvarandeRunda, ref List<int> tärningar, ref int antalLåsta, ref List<bool> låsta, Random rng, int nuvarandeKast, ref int[] poängTabell)
         {
-            if (nuvarandeRunda >= ANTAL_RUNDOR)
-                return;
-
-            WriteColour("Välj ett nummer mellan 1-6 för att låsa (t.ex 1 låser alla ettor)", ConsoleColor.Blue, 1);
-            string val = ReadLine();
-
-            if (int.TryParse(val, out int nummer) && nummer >= 1 && nummer <= 6)
+            if (nuvarandeRunda <= ANTAL_RUNDOR)
             {
-                antalLåsta = 0;
-                for (int i = 0; i < ANTAL_TÄRNINGAR; i++)
-                {
-                    if (tärningar[i] == nummer && !låsta[i])
-                    {
-                        låsta[i] = true;
-                        antalLåsta++;
-                    }
-                }
+                WriteColour("Välj ett nummer mellan 1-6 för att låsa (t.ex 1 låser alla ettor)", ConsoleColor.Blue, 1);
+                string val = ReadLine();
 
-                if (antalLåsta > 0)
+                if (int.TryParse(val, out int nummer) && nummer >= 1 && nummer <= 6)
                 {
-                    int poängFörDennaKategori = nummer * antalLåsta;
-                    poängTabell[nummer - 1] = poängFörDennaKategori;
-                    WriteColour($"Du fick {poängFörDennaKategori} poäng på {nummer}:or", ConsoleColor.Green, 2);
-                    nuvarandeRunda++;
-                    Thread.Sleep(3000);
+
+                    for (int i = 0; i < ANTAL_TÄRNINGAR; i++)
+                    {
+                        if (tärningar[i] == nummer && !låsta[i])
+                        {
+                            låsta[i] = true;
+                            antalLåsta++;
+                        }
+                    }
+
+                    if (antalLåsta > 0)
+                    {
+                        int poängFörDennaKategori = nummer * antalLåsta;
+                        poängTabell[nummer - 1] = poängFörDennaKategori;
+
+                        WriteColour($"Du fick {poängFörDennaKategori} poäng på {nummer}:or", ConsoleColor.Green, 2);
+
+                        nuvarandeRunda++;
+                        Thread.Sleep(3000);
+                    }
+                    else
+                    {
+                        WriteColour($"Inga tärningar med nummer {nummer} att låsa, eller så är de redan låsta.", ConsoleColor.Yellow, 2);
+                    }
                 }
                 else
                 {
-                    WriteColour($"Inga tärningar med nummer {nummer} att låsa, eller så är de redan låsta.", ConsoleColor.Yellow, 2);
+                    WriteColour("Du måste skriva in ett nummer mellan 1-6 för att låsa dem", ConsoleColor.Red, 1);
                 }
             }
-            else
-            {
-                WriteColour("Du måste skriva in ett nummer mellan 1-6 för att låsa dem", ConsoleColor.Red, 1);
-            }
-
             VisaNyaTärningar(ref poängTabell);
         }
+
 
         static bool RollaOm(ref List<int> tärningar, ref int nuvarandeKast, Random rng, ref int antalLåsta, ref int nuvarandeRunda, ref List<bool> låsta, ref int[] poängTabell)
         {
@@ -151,7 +196,6 @@ namespace Yatzy
                 SetCursorPosition(0, RAD_INPUT);
                 WriteColour($"Runda {nuvarandeRunda}", ConsoleColor.Green, 1);
                 WriteColour($"Vill du kasta om dina tärningar? Du får kasta om {MAX_KAST - nuvarandeKast} gånger till. [Y/N]", ConsoleColor.Yellow, 1);
-
                 char input = char.ToLower(ReadKey(true).KeyChar);
                 WriteLine();
 
@@ -176,60 +220,67 @@ namespace Yatzy
 
         static void VäljTärningarAttRolla(ref List<int> tärningar, ref List<bool> låsta, Random rng, ref int[] poängTabell)
         {
-            WriteColour("Vilka tärningar vill du kasta om? (1-6, kommaseparerade)", ConsoleColor.Yellow, 1);
-            WriteColour($"Nuvarande tärningar: {string.Join(", ", tärningar)}\n", ConsoleColor.Cyan);
+            WriteColour("Skriv siffrorna 1-6 beroende på vilken av tärningarna du vill kasta om? (separerade med kommatecken t.ex 1,3,6)", ConsoleColor.Yellow, 2);
+            WriteColour($"Nuvarande tärningar: ", ConsoleColor.Yellow);
+            WriteColour($"{string.Join(", ", tärningar)}", ConsoleColor.Cyan, 1);
 
             while (true)
             {
                 string input = ReadLine();
+
                 if (string.IsNullOrWhiteSpace(input))
                 {
-                    WriteColour("Inga tärningar valda, försök igen.", ConsoleColor.Red, 1);
+                    WriteColour("Du kastade inte om några tärningar, kom ihåg att skriva t.ex 1,3,4", ConsoleColor.Red, 1);
                     continue;
                 }
 
-                var valdaIndex = new List<int>();
+                var giltigaTärningar = new List<int>();
                 var ogiltigaVal = new List<string>();
 
-                foreach (var s in input.Split(','))
+                foreach (var die in input.Split(','))
                 {
-                    if (int.TryParse(s.Trim(), out int idx) && idx >= 1 && idx <= tärningar.Count)
+                    if (int.TryParse(die.Trim(), out int index) && index >= 1 && index <= ANTAL_TÄRNINGAR)
                     {
-                        int listIndex = idx - 1; // korrekt 0-index
-                        if (!låsta[listIndex])
-                            valdaIndex.Add(listIndex);
+                        if (låsta[index - 1])
+                        {
+                            WriteColour($"Tärning {index} är låst och kan inte kastas om.", ConsoleColor.Red, 1);
+                        }
                         else
-                            WriteColour($"Tärning {idx} är låst och kan inte slås om.\n", ConsoleColor.Red);
+                        {
+                            giltigaTärningar.Add(index - 1);
+                        }
                     }
                     else
                     {
-                        ogiltigaVal.Add(s);
+                        ogiltigaVal.Add(die);
                     }
                 }
 
                 if (ogiltigaVal.Count > 0)
                 {
-                    WriteColour($"Ogiltiga val: {string.Join(", ", ogiltigaVal)}\n", ConsoleColor.Red);
+                    WriteColour($"Ogiltiga val: {string.Join(", ", ogiltigaVal)}", ConsoleColor.Red, 2);
                     continue;
                 }
 
-                if (valdaIndex.Count == 0)
+                if (giltigaTärningar.Count == 0)
                 {
-                    WriteColour("Inga giltiga tärningar att kasta om.\n", ConsoleColor.Red);
+                    WriteColour("Inga giltiga tärningar att kasta om.", ConsoleColor.Red, 1);
                     continue;
                 }
 
-                // Slå om endast icke-låsta tärningar
-                foreach (var i in valdaIndex)
+                foreach (var die in giltigaTärningar)
                 {
-                    tärningar[i] = rng.Next(1, 7);
+                    tärningar[die] = rng.Next(1, 7);
                 }
 
                 break;
             }
 
-            WriteColour($"Nya tärningar: {string.Join(", ", tärningar)}\n", ConsoleColor.Cyan);
+            WriteColour("Nya tärningar: ", ConsoleColor.Yellow);
             Thread.Sleep(500);
+            WriteColour(string.Join(", ", tärningar), ConsoleColor.Cyan, 2);
+            WriteColour("Uppdaterar tabell...", ConsoleColor.Red);
+            Thread.Sleep(3000);
         }
 
 

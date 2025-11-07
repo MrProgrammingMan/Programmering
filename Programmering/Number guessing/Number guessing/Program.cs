@@ -5,13 +5,11 @@ namespace Number_guessing
     {
         static void Main(string[] args)
         {
-            int currentNumber = 0;
-            int min = 1;
-            int max = 101;
+            int currentNumber;
             int currentGuesses = 0;
             Random rng = new Random();
 
-            currentNumber = rng.Next(min, max);
+            currentNumber = rng.Next(1, 101);
 
             while (true)
             {
@@ -49,7 +47,7 @@ namespace Number_guessing
                         if (key == 'y')
                         {
                             Clear();
-                            currentNumber = rng.Next(min, max);
+                            currentNumber = rng.Next(1, 101);
                             break;
                         }
                         else if (key == 'n')
