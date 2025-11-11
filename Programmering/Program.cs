@@ -73,7 +73,7 @@ namespace Besöksdagen
                 // Text med WriteColour vilket gör det möjligt att lägga till färg OCH antalet radbrott man vill ha mellan texterna.
                 WriteColour("Välkommen till Reaktionspelet!", ConsoleColor.Yellow, 2);
 
-                WriteColour("Instruktioner: Tryck på ENTER när du ser ordet NU. Du kommer få en tid på hur snabb du var på att trycka den i SEKUNDER.", ConsoleColor.Cyan, 2);
+                WriteColour("Instruktioner: Tryck på ENTER när du ser ordet 'NU'. Din tid kommer vara räknad i SEKUNDER.", ConsoleColor.Cyan, 2);
 
                 WriteLine("För att starta tryck på ENTER");
 
@@ -116,7 +116,7 @@ namespace Besöksdagen
                 WriteLine("Bra jobbat! Din tid blev:");
                 WriteColour("Tid (s): " + Math.Round(clock.Elapsed.TotalSeconds, 2), ConsoleColor.Green, 2);
 
-                // Sätter in tiden du fick i variabelen nuvarandeFörsök som då skapades utanför hela while loopen
+                // Sätter in tiden du fick i variabelen ""nuvarandeFörsök" som då skapades utanför hela while loopen
                 nuvarandeFörsök = Math.Round(clock.Elapsed.TotalSeconds, 2);
 
                 // kollar om det är ett nytt rekord eller inte
@@ -201,18 +201,18 @@ namespace Besöksdagen
                     char key = Char.ToUpper(ReadKey(true).KeyChar);
                     if (key == 'Y')
                     {
-                        Clear();
                         WriteColour("Startar om...", ConsoleColor.DarkRed, 2);
-                        Thread.Sleep(200);
+                        Thread.Sleep(500);
+                        Clear();
                         break;
                     }
                     else if (key == 'N')
                     {
-                        Clear();
                         WriteColour("Nollställer poäng...", ConsoleColor.DarkRed, 2);
                         rekord = 0;
                         nuvarandeFörsök = 0;
-                        Thread.Sleep(200);
+                        Thread.Sleep(500);
+                        Clear();
                         break;
                     }
                     else
@@ -259,9 +259,10 @@ namespace Besöksdagen
 
             // skriver ut den vackra leaderboarden :)
             WriteLine("Leaderboard:");
-            foreach (var entry in leaderboard)
+            for (int i = 0; i < leaderboard.Count; i++)
             {
-                WriteLine($"{entry.namn}: {entry.tid.ToString(nfi)} sekunder");
+                var entry = leaderboard[i];
+                WriteLine($"{i + 1}. {entry.namn}: {entry.tid.ToString(nfi)} sekunder");
             }
         }
     }
