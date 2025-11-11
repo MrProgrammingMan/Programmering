@@ -1,9 +1,6 @@
-﻿using System.Threading;
+using System.Threading;
 using System.Diagnostics;
 using static System.Console;
-using System.Xml.Schema;
-using System.ComponentModel.Design;
-using System.Buffers;
 using System.Globalization;
 namespace Besöksdagen
 {
@@ -13,14 +10,35 @@ namespace Besöksdagen
         {
             NumberFormatInfo nfi = new CultureInfo("en-US", false).NumberFormat;
 
-            // skapar filen för poängen
+            // skapar filen för poängen om den inte redan existerar
             string filePath = "scores.txt";
 
             // kollar om filen redan existerar, om den gör det så läser den vad som står i filen
-            List<string> poäng = new List<string>();
+            List<string> namnLista = new List<string>();
+            List<float> poäng = new List<float>();
+
             if (File.Exists(filePath))
             {
-                poäng = File.ReadAllLines(filePath).ToList();
+                string[] linjer = File.ReadAllLines(filePath);
+
+                // delar upp så vi bara får nummerna och inte namnet också, då kan vi använda nummerna för att byta , till .
+                foreach (string linje in linjer)
+                {
+                    string[] delar = linje.Split(':');
+                    if (delar.Length == 2)
+                    {
+                        namnLista.Add(delar[0]);
+                        if (float.TryParse(delar[1].Trim(), NumberStyles.Float, nfi, out float score))
+                        {
+                            poäng.Add(score);
+                        }
+                        else
+                        {
+                            WriteLine("Hittade inte poäng");
+                            poäng.Add(0f);
+                        }
+                    }
+                }
             }
 
 
@@ -31,7 +49,7 @@ namespace Besöksdagen
             if (devMode)
             {
                 File.WriteAllText("scores.txt", "");
-                WriteColour("scores.txt rensad (devMode aktivt)", ConsoleColor.DarkRed, 2);
+                WriteColour("scores.txt rensad (devMode aktiv)", ConsoleColor.DarkRed, 2);
             }
             */
 
@@ -48,20 +66,7 @@ namespace Besöksdagen
             Restart:
 
                 // Visar leaderboarden om den hittar filen scores.txt
-                if (File.Exists("scores.txt"))
-                {
-                    string[] scores = File.ReadAllLines("scores.txt");
-
-                    WriteLine("Leaderboard:");
-                    foreach (string line in scores)
-                    {
-                        WriteLine(line + " sekunder", nfi);
-                    }
-                }
-                else
-                {
-                    WriteLine("Ingen poänglista hittades.");
-                }
+                VisaLeaderboard(namnLista, poäng, nfi);
 
                 WriteLine();
 
@@ -86,7 +91,7 @@ namespace Besöksdagen
                     if (Console.KeyAvailable)
                     {
                         ReadKey(true);
-                        WriteColour("För tidigt! Du får inte trycka ENTER innan NU!", ConsoleColor.Red, 1);
+                        WriteColour("För tidigt! Du får inte trycka ENTER innan NU!", ConsoleColor.DarkRed, 1);
                         Thread.Sleep(1000);
                         Clear();
                         goto Restart;
@@ -96,7 +101,7 @@ namespace Besöksdagen
                     waited += 10;
                 }
 
-                WriteColour("NU", ConsoleColor.Red, 2);
+                WriteColour("NU", ConsoleColor.Red, 1);
 
                 // Startar klockan för att mäta hur många millisekunder det tar tills användaren trycker på ENTER
                 Stopwatch clock = Stopwatch.StartNew();
@@ -109,7 +114,7 @@ namespace Besöksdagen
 
                 // Kollar hur mycket tid du har i sekunder och avrundar det till 2 decimaler
                 WriteLine("Bra jobbat! Din tid blev:");
-                WriteColour("Tid (s): " + Math.Round(clock.Elapsed.TotalSeconds, 2), ConsoleColor.Green, 1);
+                WriteColour("Tid (s): " + Math.Round(clock.Elapsed.TotalSeconds, 2), ConsoleColor.Green, 2);
 
                 // Sätter in tiden du fick i variabelen nuvarandeFörsök som då skapades utanför hela while loopen
                 nuvarandeFörsök = Math.Round(clock.Elapsed.TotalSeconds, 2);
@@ -130,11 +135,10 @@ namespace Besöksdagen
                 }
 
                 // Låter användaren lägga in sitt resultat på leaderboarden om den vill
-                WriteColour("Vill du lägga in ditt resultat på leaderboarden? [Y/N]", ConsoleColor.Yellow, 1);
+                WriteColour("Vill du lägga in ditt resultat på leaderboarden? [Y/N]", ConsoleColor.Yellow, 2);
 
                 while (true)
                 {
-
                     char input = Char.ToUpper(ReadKey(true).KeyChar);
                     if (input == 'Y')
                     {
@@ -149,29 +153,41 @@ namespace Besöksdagen
                                 continue;
                             }
 
+                            // sparar både namn och nummret i "resultat"
                             string resultat = $"{namn}:{nuvarandeFörsök}";
 
+                            // delar upp resultat i två delar: där split[0] = namnn och split[1] = tid
                             string[] split = resultat.Split(':');
 
+                            // gör om split[1] till en float som då håller ett nummer (i detta fall tiden)
                             float num = float.Parse(split[1]);
 
-                            poäng.Add(split[1]);
+                            // lägger till namn i listan "namnLista" och tiden i listan "poäng"
+                            namnLista.Add(namn);
+                            poäng.Add(num);
 
-                            File.WriteAllLines(filePath, poäng);
 
-                            WriteColour("Ditt resultat har sparats!", ConsoleColor.Yellow, 2);
+                            List<string> combined = new();
+                            for (int i = 0; i < namnLista.Count; i++)
+                            {
+                                combined.Add($"{namnLista[i]}:{poäng[i].ToString(nfi)}");
+                            }
+
+                            File.WriteAllLines("scores.txt", combined);
+
+                            WriteColour("Ditt resultat har sparats!", ConsoleColor.Green, 2);
                             break;
                         }
                         break;
                     }
                     else if (input == 'N')
                     {
-                        WriteColour("Okej då gör vi inte det!", ConsoleColor.Red, 2);
+                        WriteColour("Hoppar över resultat!", ConsoleColor.DarkRed, 2);
                         break;
                     }
                     else
                     {
-                        WriteColour("Tryck på Y eller N", ConsoleColor.Red, 2);
+                        WriteColour("Tryck på Y eller N", ConsoleColor.DarkRed, 2);
                         continue;
                     }
                 }
@@ -186,14 +202,14 @@ namespace Besöksdagen
                     if (key == 'Y')
                     {
                         Clear();
-                        WriteColour("Startar om...", ConsoleColor.Red, 2);
+                        WriteColour("Startar om...", ConsoleColor.DarkRed, 2);
                         Thread.Sleep(200);
                         break;
                     }
                     else if (key == 'N')
                     {
                         Clear();
-                        WriteColour("Resettar poäng...", ConsoleColor.Red, 2);
+                        WriteColour("Nollställer poäng...", ConsoleColor.DarkRed, 2);
                         rekord = 0;
                         nuvarandeFörsök = 0;
                         Thread.Sleep(200);
@@ -201,7 +217,7 @@ namespace Besöksdagen
                     }
                     else
                     {
-                        WriteColour("Tryck på Y eller N", ConsoleColor.Red, 2);
+                        WriteColour("Tryck på Y eller N", ConsoleColor.DarkRed, 2);
                         continue;
                     }
                 }
@@ -209,6 +225,7 @@ namespace Besöksdagen
             }
         }
 
+        // static void som gör det möjligt att använda WriteColour denna hämtar string som då är det man skrev in sen hämtar den färgen och till slut radbrott
         public static void WriteColour(string text, ConsoleColor colour = ConsoleColor.White, int breaks = 0)
         {
             ForegroundColor = colour;
@@ -221,9 +238,31 @@ namespace Besöksdagen
             }
         }
 
-        static void VisaLeaderboard()
+        // static void för att visa leaderboarden, den hämtar listan "namnLista", listtan "poäng" och till slut "nfi" som gör så att decimaler blir punkter
+        static void VisaLeaderboard(List<string> namnLista, List<float> poäng, NumberFormatInfo nfi)
         {
+            if (namnLista.Count == 0)
+            {
+                WriteLine("Ingen poänglista hittades ännu, testa att köra en runda först.");
+                return;
+            }
 
+            // skapar en lista som tempoärt sätter ihop namnLista och poäng för att kunna lägga in det i listan "leaderboard" som sen skriver ut de snabbaste människorna
+            List<(string namn, float tid)> leaderboard = new List<(string, float)>();
+            for (int i = 0; i < namnLista.Count; i++)
+            {
+                leaderboard.Add((namnLista[i], poäng[i]));
+            }
+
+            // sorterar listan så att de snabbaste är längst up och resten är under (simpelt)
+            leaderboard.Sort((a, b) => a.tid.CompareTo(b.tid));
+
+            // skriver ut den vackra leaderboarden :)
+            WriteLine("Leaderboard:");
+            foreach (var entry in leaderboard)
+            {
+                WriteLine($"{entry.namn}: {entry.tid.ToString(nfi)} sekunder");
+            }
         }
     }
 }
