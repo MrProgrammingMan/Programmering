@@ -1,22 +1,28 @@
-using System.Threading;
+﻿using System.Threading;
 using System.Diagnostics;
 using static System.Console;
 using System.Xml.Schema;
+using System.ComponentModel.Design;
+using System.Buffers;
+using System.Globalization;
 namespace Besöksdagen
 {
     internal class Program
     {
         static void Main(string[] args)
         {
+            NumberFormatInfo nfi = new CultureInfo("en-US", false).NumberFormat;
 
             // skapar filen för poängen
             string filePath = "scores.txt";
 
+            // kollar om filen redan existerar, om den gör det så läser den vad som står i filen
             List<string> poäng = new List<string>();
             if (File.Exists(filePath))
             {
                 poäng = File.ReadAllLines(filePath).ToList();
             }
+
 
             // Används för att rensa leaderboarden om det skulle behövas (RÖR INTE OM DU INTE ÄR SANDER)
             /*
@@ -40,6 +46,24 @@ namespace Besöksdagen
             {
             // Här börjar "Restart" används sedan för att kunna återvända här om man skriver in för tidigt.
             Restart:
+
+                // Visar leaderboarden om den hittar filen scores.txt
+                if (File.Exists("scores.txt"))
+                {
+                    string[] scores = File.ReadAllLines("scores.txt");
+
+                    WriteLine("Leaderboard:");
+                    foreach (string line in scores)
+                    {
+                        WriteLine(line + " sekunder", nfi);
+                    }
+                }
+                else
+                {
+                    WriteLine("Ingen poänglista hittades.");
+                }
+
+                WriteLine();
 
                 // Text med WriteColour vilket gör det möjligt att lägga till färg OCH antalet radbrott man vill ha mellan texterna.
                 WriteColour("Välkommen till Reaktionspelet!", ConsoleColor.Yellow, 2);
@@ -87,7 +111,6 @@ namespace Besöksdagen
                 WriteLine("Bra jobbat! Din tid blev:");
                 WriteColour("Tid (s): " + Math.Round(clock.Elapsed.TotalSeconds, 2), ConsoleColor.Green, 1);
 
-
                 // Sätter in tiden du fick i variabelen nuvarandeFörsök som då skapades utanför hela while loopen
                 nuvarandeFörsök = Math.Round(clock.Elapsed.TotalSeconds, 2);
 
@@ -106,6 +129,7 @@ namespace Besöksdagen
                     WriteLine("Wow du fick samma nummer igen! Det är inte alltid det händer ;)");
                 }
 
+                // Låter användaren lägga in sitt resultat på leaderboarden om den vill
                 WriteColour("Vill du lägga in ditt resultat på leaderboarden? [Y/N]", ConsoleColor.Yellow, 1);
 
                 while (true)
@@ -114,21 +138,36 @@ namespace Besöksdagen
                     char input = Char.ToUpper(ReadKey(true).KeyChar);
                     if (input == 'Y')
                     {
-                        WriteColour("Skriv in ditt namn:", ConsoleColor.Cyan, 1);
-                        string namn = ReadLine();
+                        while (true)
+                        {
+                            WriteColour("Skriv in ditt namn:", ConsoleColor.Cyan, 1);
+                            string? namn = ReadLine();
 
-                        string resultat = $"{namn}: {rekord} sekunder";
-                        poäng.Add(resultat);
+                            if (string.IsNullOrWhiteSpace(namn))
+                            {
+                                WriteLine("Du skrev inte in något namn! Försök igen.");
+                                continue;
+                            }
 
-                        File.WriteAllLines(filePath, poäng);
+                            string resultat = $"{namn}:{nuvarandeFörsök}";
 
-                        WriteColour("Ditt resultat har sparats!", ConsoleColor.Yellow, 2);
+                            string[] split = resultat.Split(':');
+
+                            float num = float.Parse(split[1]);
+
+                            poäng.Add(split[1]);
+
+                            File.WriteAllLines(filePath, poäng);
+
+                            WriteColour("Ditt resultat har sparats!", ConsoleColor.Yellow, 2);
+                            break;
+                        }
                         break;
                     }
                     else if (input == 'N')
                     {
-                        WriteColour("Okej då gör vi inte det!", ConsoleColor.Red);
-                        return;
+                        WriteColour("Okej då gör vi inte det!", ConsoleColor.Red, 2);
+                        break;
                     }
                     else
                     {
@@ -137,22 +176,28 @@ namespace Besöksdagen
                     }
                 }
 
-                WriteColour($"Vill du köra igen? Ditt rekord är: {rekord} [Y/N]", ConsoleColor.Yellow, 2);
+
+                // Frågar om användaren vill köra igen
+                WriteColour($"Vill du köra igen? Ditt rekord är: {rekord} sekunder! [Y/N]", ConsoleColor.Yellow, 2);
 
                 while (true)
                 {
-                    char input = Char.ToUpper(ReadKey(true).KeyChar);
-                    if (input == 'Y')
+                    char key = Char.ToUpper(ReadKey(true).KeyChar);
+                    if (key == 'Y')
                     {
                         Clear();
                         WriteColour("Startar om...", ConsoleColor.Red, 2);
                         Thread.Sleep(200);
                         break;
                     }
-                    else if (input == 'N')
+                    else if (key == 'N')
                     {
-                        WriteColour("Stänger programmet...", ConsoleColor.Red);
-                        return;
+                        Clear();
+                        WriteColour("Resettar poäng...", ConsoleColor.Red, 2);
+                        rekord = 0;
+                        nuvarandeFörsök = 0;
+                        Thread.Sleep(200);
+                        break;
                     }
                     else
                     {
@@ -174,6 +219,11 @@ namespace Besöksdagen
             {
                 WriteLine();
             }
+        }
+
+        static void VisaLeaderboard()
+        {
+
         }
     }
 }
