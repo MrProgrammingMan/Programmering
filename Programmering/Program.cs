@@ -1,6 +1,7 @@
-using System;
 using System.Diagnostics;
 using System.Globalization;
+using System.Runtime.Intrinsics.Arm;
+using System.Security.Cryptography;
 using System.Threading;
 using static System.Console;
 namespace Besöksdagen
@@ -168,7 +169,7 @@ namespace Besöksdagen
                             // Kontrollerar om stringen "namn" inte innehåller något riktigt värde, alltså om det är 'null', tomt ("") eller bara mellanslag/tabbar
                             if (string.IsNullOrWhiteSpace(namn))
                             {
-                                WriteLine("Du skrev inte in något namn! Försök igen.");
+                                WriteColour("Du skrev inte in något namn! Försök igen.", ConsoleColor.DarkRed);
                                 continue;
                             }
 
@@ -200,7 +201,7 @@ namespace Besöksdagen
                                 float oldScore = poäng[befintligtNamnIndex];
                                 if (num < oldScore)
                                 {
-                                    poäng[befintligtNamnIndex] = num; // uppdatera endast tiden är lägre
+                                    poäng[befintligtNamnIndex] = num;
                                     listanÄndrad = true;
                                     WriteColour($"Namnet {namn} fanns redan i leaderboarden! Ditt gammla resultat har uppdateras: {oldScore.ToString(nfi)} -> {num.ToString(nfi)} sekunder", ConsoleColor.Green, 2);
                                 }
@@ -227,7 +228,6 @@ namespace Besöksdagen
                                 }
                                 File.WriteAllLines("scores.txt", combined);
                             }
-
                             break;
                         }
                         break;
