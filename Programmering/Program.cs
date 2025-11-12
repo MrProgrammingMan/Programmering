@@ -1,46 +1,52 @@
-using System.Threading;
+using System;
 using System.Diagnostics;
-using static System.Console;
 using System.Globalization;
+using System.Threading;
+using static System.Console;
 namespace Besöksdagen
 {
     internal class Program
     {
         static void Main(string[] args)
         {
+
+            // C# använder systemets språk (svenska) som normalt har kommatecken för decimaler
+            // Vi sätter därför engelsk ("en-US") formatering så att decimaler skrivs med punkt när "nfi" används
             NumberFormatInfo nfi = new CultureInfo("en-US", false).NumberFormat;
 
-            // skapar filen för poängen om den inte redan existerar
+            // skapar en variabel som sparar namnet på filen där poängen ska sparas
             string filePath = "scores.txt";
 
-            // kollar om filen redan existerar, om den gör det så läser den vad som står i filen
+            // skapar två listor, en som är en string (text) och en som är en float (nummer som kan innehålla decimaler)
             List<string> namnLista = new List<string>();
             List<float> poäng = new List<float>();
 
+            // kollar om filen redan existerar, om den gör det så läser den vad som står i filen
             if (File.Exists(filePath))
             {
-                string[] linjer = File.ReadAllLines(filePath);
+                string[] linjer = File.ReadAllLines(filePath); // alla rader i filen sparas i en array, så vi kan komma åt varje rad med ett nummer
 
-                // delar upp så vi bara får nummerna och inte namnet också, då kan vi använda nummerna för att byta , till .
+                // delar upp så vi bara får nummerna och inte namnen, då kan vi byta nummerna från ',' till '.' med "nfi"
                 foreach (string linje in linjer)
                 {
                     string[] delar = linje.Split(':');
                     if (delar.Length == 2)
                     {
                         namnLista.Add(delar[0]);
+
+                        // försöker göra poängen till ett nummer, t.ex. "2.54" -> 2.54
                         if (float.TryParse(delar[1].Trim(), NumberStyles.Float, nfi, out float score))
                         {
                             poäng.Add(score);
                         }
                         else
                         {
-                            WriteLine("Hittade inte poäng");
+                            WriteLine("Hittade inte poäng"); // om något gick fel
                             poäng.Add(0f);
                         }
                     }
                 }
             }
-
 
             // Används för att rensa leaderboarden om det skulle behövas (RÖR INTE OM DU INTE ÄR SANDER)
             /*
@@ -50,8 +56,11 @@ namespace Besöksdagen
             {
                 File.WriteAllText("scores.txt", "");
                 WriteColour("scores.txt rensad (devMode aktiv)", ConsoleColor.DarkRed, 2);
+                Thread.Sleep(3000);
             }
             */
+
+
 
             // skapar alla variablerna som borde vara UTANFÖR själva loopen
             Random rng = new Random();
@@ -62,43 +71,51 @@ namespace Besöksdagen
             // skapar loopen och kör detta tills while är 'false'
             while (true)
             {
-            // Här börjar "Restart" används sedan för att kunna återvända här om man skriver in för tidigt.
+            // Här börjar "Restart" används sedan för att kunna återvända här om man skriver in för tidigt
             Restart:
 
-                // Visar leaderboarden om den hittar filen scores.txt
+                // Clear rensar bara det som syns på skärmen, men "\x1b[3J" tar även bort det som ligger ovanför (scroll-historiken)
+                Clear();
+                Console.Write("\x1b[3J");
+
+                // Denna 'metoden' som det kallas kör koden som är inuti den (finns om du skrollar längst ner)
+                // då slipper man kopiera och klistra in kod på flera olika ställen och kan istället bara använda metoden
                 VisaLeaderboard(namnLista, poäng, nfi);
 
                 WriteLine();
 
-                // Text med WriteColour vilket gör det möjligt att lägga till färg OCH antalet radbrott man vill ha mellan texterna.
+                // WriteColour 'metoden' som gör det möjligt att lägga till färg OCH antalet radbrott man vill ha mellan texterna på en rad
+                // färgen och antal radbrott ser man längst åt höger i koden på varjee rad
                 WriteColour("Välkommen till Reaktionspelet!", ConsoleColor.Yellow, 2);
 
                 WriteColour("Instruktioner: Tryck på ENTER när du ser ordet 'NU'. Din tid kommer vara räknad i SEKUNDER.", ConsoleColor.Cyan, 2);
 
-                WriteLine("För att starta tryck på ENTER");
+                WriteLine("För att starta tryck på ENTER knappen!");
 
-                // Läser konsolens input (då man trycker på ENTER)
                 ReadLine();
 
-                // Skapar en int som är en variabel med ett nummer i. I detta fallet så är nummret mellan 1000 och 5000 (som används som millisekunder, så då blir det mellan 1 och 5 sekunder) Vilket betyder att den högsta möjliga tiden att vänta är 5 sekunder
                 WriteColour("Vänta...", ConsoleColor.Blue, 2);
-                int timer = rng.Next(1000, 5000);
-                int waited = 0;
 
-                // Fortsätter lägga till 10 millisekunder hela tiden på variabelen waited tills waited = timer
-                while (waited < timer)
+                while (KeyAvailable)
                 {
+                    ReadKey(true);
+                }
+
+                // Startar klockan och väntar en slumpmässig tid (1–5 sekunder som är då i millisekunder) innan "NU" visas
+                Stopwatch väntaKlocka = Stopwatch.StartNew();
+                int timer = rng.Next(1000, 5000);
+
+                while (väntaKlocka.ElapsedMilliseconds < timer)
+                {
+                    // Om spelaren trycker för tidigt
                     if (Console.KeyAvailable)
                     {
-                        ReadKey(true);
+                        ReadKey(true); // läs och dölj tangenten
                         WriteColour("För tidigt! Du får inte trycka ENTER innan NU!", ConsoleColor.DarkRed, 1);
                         Thread.Sleep(1000);
-                        Clear();
                         goto Restart;
                     }
-
-                    Thread.Sleep(10);
-                    waited += 10;
+                    Thread.Sleep(10); // för att inte döda processorn ;)
                 }
 
                 WriteColour("NU", ConsoleColor.Red, 1);
@@ -108,15 +125,13 @@ namespace Besöksdagen
 
                 ReadLine();
 
-                // Stoppar klockan efter ENTER har tryckits på
                 clock.Stop();
-
 
                 // Kollar hur mycket tid du har i sekunder och avrundar det till 2 decimaler
                 WriteLine("Bra jobbat! Din tid blev:");
                 WriteColour("Tid (s): " + Math.Round(clock.Elapsed.TotalSeconds, 2), ConsoleColor.Green, 2);
 
-                // Sätter in tiden du fick i variabelen ""nuvarandeFörsök" som då skapades utanför hela while loopen
+                // Sätter in tiden du fick i variabelen "nuvarandeFörsök" som då skapades utanför hela while loopen
                 nuvarandeFörsök = Math.Round(clock.Elapsed.TotalSeconds, 2);
 
                 // kollar om det är ett nytt rekord eller inte
@@ -131,14 +146,17 @@ namespace Besöksdagen
                 }
                 else if (nuvarandeFörsök == rekord)
                 {
-                    WriteLine("Wow du fick samma nummer igen! Det är inte alltid det händer ;)");
+                    WriteLine("Wow du fick samma nummer som ditt rekord! Det är inte alltid det händer ;)");
                 }
 
-                // Låter användaren lägga in sitt resultat på leaderboarden om den vill
-                WriteColour("Vill du lägga in ditt resultat på leaderboarden? [Y/N]", ConsoleColor.Yellow, 2);
+                // Låter användaren lägga in sitt resultat på leaderboarden om de vill
+                WriteColour("Vill du lägga in ditt resultat på leaderboarden? tryck på [Y/N]", ConsoleColor.Yellow, 2);
 
                 while (true)
                 {
+                    // Läser vilken tangent användaren trycker på och tar bara tecknet (KeyChar)
+                    // Char.ToUpper gör bokstaven stor (t.ex. 'y' → 'Y') så vi slipper skilja på stora/små bokstäver för lättare programmering ;)
+                    // (true) döljer tangenttrycket i konsolen
                     char input = Char.ToUpper(ReadKey(true).KeyChar);
                     if (input == 'Y')
                     {
@@ -147,35 +165,69 @@ namespace Besöksdagen
                             WriteColour("Skriv in ditt namn:", ConsoleColor.Cyan, 1);
                             string? namn = ReadLine();
 
+                            // Kontrollerar om stringen "namn" inte innehåller något riktigt värde, alltså om det är 'null', tomt ("") eller bara mellanslag/tabbar
                             if (string.IsNullOrWhiteSpace(namn))
                             {
                                 WriteLine("Du skrev inte in något namn! Försök igen.");
                                 continue;
                             }
 
-                            // sparar både namn och nummret i "resultat"
+                            // Gör så att variabelen "namn" alltid börjar med stor bokstav
+                            namn = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(namn.Trim().ToLower());
+
+                            // sparar både namn och nummret i "resultat" genom att lägga de i en string
+                            // exempel på hur stringen kan se ut: Timmy:0.36
                             string resultat = $"{namn}:{nuvarandeFörsök}";
 
-                            // delar upp resultat i två delar: där split[0] = namnn och split[1] = tid
+                            // delar upp resultat i två delar: där split[0] = namnn och split[1] = nuvarandeFörsök
+                            // split[] betyder att vi har flera ord sparade i en lista (en array av strängar)
+                            // varje ord har ett nummer, så man kan hämta dem genom t.ex split[0], split[1] osv
                             string[] split = resultat.Split(':');
 
-                            // gör om split[1] till en float som då håller ett nummer (i detta fall tiden)
+                            // gör om split[1] = nuvarandeFörsök till en float som heter "num" som då håller ett nummer med decimaler (i detta fall är det tiden man fick)
                             float num = float.Parse(split[1]);
 
-                            // lägger till namn i listan "namnLista" och tiden i listan "poäng"
-                            namnLista.Add(namn);
-                            poäng.Add(num);
+                            // Letar efter indexet för det namn som användaren skrev in i namnLista
+                            // StringComparison.OrdinalIgnoreCase gör att jämförelsen inte bryr sig om stora eller små bokstäver
+                            // Om namnet finns returneras dess index (0, 1, 2 osv.), annars returneras -1
+                            int befintligtNamnIndex = namnLista.FindIndex(n => n.Equals(namn, StringComparison.OrdinalIgnoreCase));
 
+                            bool listanÄndrad = false;
 
-                            List<string> combined = new();
-                            for (int i = 0; i < namnLista.Count; i++)
+                            if (befintligtNamnIndex >= 0)
                             {
-                                combined.Add($"{namnLista[i]}:{poäng[i].ToString(nfi)}");
+                                // personen finns redan — jämför mot gammalt värde utan att skriva över direkt
+                                float oldScore = poäng[befintligtNamnIndex];
+                                if (num < oldScore)
+                                {
+                                    poäng[befintligtNamnIndex] = num; // uppdatera endast tiden är lägre
+                                    listanÄndrad = true;
+                                    WriteColour($"Namnet {namn} fanns redan i leaderboarden! Ditt gammla resultat har uppdateras: {oldScore.ToString(nfi)} -> {num.ToString(nfi)} sekunder", ConsoleColor.Green, 2);
+                                }
+                                else
+                                {
+                                    WriteColour("Du har redan ett bättre resultat!", ConsoleColor.DarkRed, 2);
+                                }
+                            }
+                            else
+                            {
+                                namnLista.Add(namn);
+                                poäng.Add(num);
+                                listanÄndrad = true;
+                                WriteColour("Ditt resultat har sparats!", ConsoleColor.Green, 2);
                             }
 
-                            File.WriteAllLines("scores.txt", combined);
+                            // skriv till filen EN gång, bara om listan har ändrats
+                            if (listanÄndrad)
+                            {
+                                List<string> combined = new();
+                                for (int i = 0; i < namnLista.Count; i++)
+                                {
+                                    combined.Add($"{namnLista[i]}:{poäng[i].ToString(nfi)}");
+                                }
+                                File.WriteAllLines("scores.txt", combined);
+                            }
 
-                            WriteColour("Ditt resultat har sparats!", ConsoleColor.Green, 2);
                             break;
                         }
                         break;
@@ -194,7 +246,7 @@ namespace Besöksdagen
 
 
                 // Frågar om användaren vill köra igen
-                WriteColour($"Vill du köra igen? Ditt rekord är: {rekord} sekunder! [Y/N]", ConsoleColor.Yellow, 2);
+                WriteColour($"Vill du köra igen? Ditt rekord är just nu: {rekord} sekunder! [Y/N]", ConsoleColor.Yellow, 2);
 
                 while (true)
                 {
@@ -203,7 +255,6 @@ namespace Besöksdagen
                     {
                         WriteColour("Startar om...", ConsoleColor.DarkRed, 2);
                         Thread.Sleep(500);
-                        Clear();
                         break;
                     }
                     else if (key == 'N')
@@ -212,7 +263,6 @@ namespace Besöksdagen
                         rekord = 0;
                         nuvarandeFörsök = 0;
                         Thread.Sleep(500);
-                        Clear();
                         break;
                     }
                     else
@@ -225,7 +275,9 @@ namespace Besöksdagen
             }
         }
 
-        // static void som gör det möjligt att använda WriteColour denna hämtar string som då är det man skrev in sen hämtar den färgen och till slut radbrott
+        // En metod är en liten bit kod som kan återanvändas flera gånger
+        // Den här metoden skriver text med valfri färg och valfritt antal radbrytningar
+        // Exempel: WriteColour("Hej!", ConsoleColor.Yellow, 2);
         public static void WriteColour(string text, ConsoleColor colour = ConsoleColor.White, int breaks = 0)
         {
             ForegroundColor = colour;
@@ -238,23 +290,23 @@ namespace Besöksdagen
             }
         }
 
-        // static void för att visa leaderboarden, den hämtar listan "namnLista", listtan "poäng" och till slut "nfi" som gör så att decimaler blir punkter
+        // Visar leaderboarden med namn och tider, sorterat från snabbast till långsamast
         static void VisaLeaderboard(List<string> namnLista, List<float> poäng, NumberFormatInfo nfi)
         {
-            if (namnLista.Count == 0)
+            if (namnLista.Count == 0) // kolla om listan är tom 
             {
                 WriteLine("Ingen poänglista hittades ännu, testa att köra en runda först.");
                 return;
             }
 
-            // skapar en lista som tempoärt sätter ihop namnLista och poäng för att kunna lägga in det i listan "leaderboard" som sen skriver ut de snabbaste människorna
+            // Här sparar vi både namn och tid tillsammans i en lista
             List<(string namn, float tid)> leaderboard = new List<(string, float)>();
             for (int i = 0; i < namnLista.Count; i++)
             {
                 leaderboard.Add((namnLista[i], poäng[i]));
             }
 
-            // sorterar listan så att de snabbaste är längst up och resten är under (simpelt)
+            // Sortera från snabbast till långsamast
             leaderboard.Sort((a, b) => a.tid.CompareTo(b.tid));
 
             // skriver ut den vackra leaderboarden :)
