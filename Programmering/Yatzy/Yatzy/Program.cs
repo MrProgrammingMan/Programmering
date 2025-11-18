@@ -24,7 +24,7 @@ namespace Yatzy
 
             while (spela)
             {
-låsta = Enumerable.Repeat(false, ANTAL_TÄRNINGAR).ToList();
+                låsta = Enumerable.Repeat(false, ANTAL_TÄRNINGAR).ToList();
 
                 if (tärningar.Count == 0)
                 {
