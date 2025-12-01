@@ -38,21 +38,61 @@ namespace Metoder
 
             // Uppgift 4
 
-
             
             WriteLine("Hur många celsius är det ute?");
 
-            float celsius = int.Parse(ReadLine());
-            float fahrenheit = CelsiusTillFahrenheit(celsius);
+            double celsius = double.Parse(ReadLine());
+            double fahrenheit = CelsiusTillFahrenheit(celsius);
 
             WriteLine($"Celsius: {celsius} -> Fahrenheit: {fahrenheit}");
             
+
+            /*
+            int myNum1 = Add(3, 5);
+            double myNum2 = Add(6.7, 4.2);
+            float myNum3 = Add(8.214321f, 7.32319804f);
+            WriteLine($"Sum of two ints: {myNum1}");
+            WriteLine($"Sum of two doubles: {myNum2}");
+            WriteLine($"Sum of two floats: {myNum3}");
+            */
         }
+        /// <summary>
+        ///  :3 adderar :3
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <returns></returns>
+        static int Add(int a, int b)
+        {
+            return a + b;
+        }
+        /// <summary>
+        /// Float med mer decimaler
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <returns></returns>
+        static double Add (double a, double b)
+        {
+            return a + b;
+        }
+        /// <summary>
+        /// double med mindre decimaler
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <returns></returns>
+        static float Add(float a, float b)
+        {
+            return a + b;
+        }
+
 
         static void ÖkaMotivation()
         {
             WriteLine("Bra jobbat!");
         }
+
 
         static void InfoOmTal(int tal)
         {
@@ -82,9 +122,9 @@ namespace Metoder
             }
         }
         
-        static float CelsiusTillFahrenheit(float celsius)
+        static double CelsiusTillFahrenheit(double celsius)
         {
-            float fahrenheit = celsius / 5.0f * 9 + 32;
+            double fahrenheit = celsius / 5.0f * 9 + 32;
 
             return fahrenheit;
         }

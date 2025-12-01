@@ -108,37 +108,46 @@ namespace Besöksdagen
 
                 while (väntaKlocka.ElapsedMilliseconds < timer)
                 {
-                    // Om spelaren trycker för tidigt
-                    if (Console.KeyAvailable)
+                    if (KeyAvailable)
                     {
-                        ReadKey(true); // läs och dölj tangenten
+                        ReadKey(true);
                         WriteColour("För tidigt! Du får inte trycka ENTER innan NU!", ConsoleColor.DarkRed, 1);
                         Thread.Sleep(1000);
                         goto Restart;
                     }
-                    Thread.Sleep(10); // för att inte döda processorn ;)
+                    Thread.Sleep(10);
                 }
 
                 WriteColour("NU", ConsoleColor.Red, 1);
 
-                // Startar klockan för att mäta hur många millisekunder det tar tills användaren trycker på ENTER
                 Stopwatch clock = Stopwatch.StartNew();
 
-                ReadLine();
+                while (true)
+                {
+                    SetCursorPosition(0, CursorTop);
+                    Write($"Tid: {clock.ElapsedMilliseconds} ms");
+
+                    if (KeyAvailable)
+                    {
+                        var key = ReadKey(true);
+                        if (key.Key == ConsoleKey.Enter)
+                            break;
+                    }
+
+                    Thread.Sleep(10);
+                }
 
                 clock.Stop();
+                WriteLine();
 
-                // Kollar hur mycket tid du har i sekunder och avrundar det till 2 decimaler
                 WriteLine("Bra jobbat! Din tid blev:");
-                WriteColour("Tid (s): " + Math.Round(clock.Elapsed.TotalSeconds, 2), ConsoleColor.Green, 2);
+                WriteColour("Tid (s): " + Math.Round(clock.Elapsed.TotalSeconds, 3), ConsoleColor.Green, 2);
 
-                // Sätter in tiden du fick i variabelen "nuvarandeFörsök" som då skapades utanför hela while loopen
-                nuvarandeFörsök = Math.Round(clock.Elapsed.TotalSeconds, 2);
+                nuvarandeFörsök = Math.Round(clock.Elapsed.TotalSeconds, 3);
 
-                // kollar om det är ett nytt rekord eller inte
                 if (rekord == 0)
                 {
-                    rekord = Math.Round(clock.Elapsed.TotalSeconds, 2);
+                    rekord = Math.Round(clock.Elapsed.TotalSeconds, 3);
                 }
                 else if (nuvarandeFörsök < rekord)
                 {
@@ -275,9 +284,12 @@ namespace Besöksdagen
             }
         }
 
-        // En metod är en liten bit kod som kan återanvändas flera gånger
-        // Den här metoden skriver text med valfri färg och valfritt antal radbrytningar
-        // Exempel: WriteColour("Hej!", ConsoleColor.Yellow, 2);
+        /// <summary>
+        /// Skriver text med färg och radbrott
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="colour"></param>
+        /// <param name="breaks"></param>
         public static void WriteColour(string text, ConsoleColor colour = ConsoleColor.White, int breaks = 0)
         {
             ForegroundColor = colour;
@@ -290,7 +302,12 @@ namespace Besöksdagen
             }
         }
 
-        // Visar leaderboarden med namn och tider, sorterat från snabbast till långsamast
+        /// <summary>
+        /// Visar leaderboarden genom att kolla igenom filen där namnen är och sorterar dem
+        /// </summary>
+        /// <param name="namnLista"></param>
+        /// <param name="poäng"></param>
+        /// <param name="nfi"></param>
         static void VisaLeaderboard(List<string> namnLista, List<float> poäng, NumberFormatInfo nfi)
         {
             if (namnLista.Count == 0) // kolla om listan är tom 
