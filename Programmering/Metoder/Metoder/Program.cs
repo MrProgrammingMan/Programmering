@@ -1,4 +1,5 @@
 ﻿using static System.Console;
+using System.Linq;
 namespace Metoder
 {
     internal class Program
@@ -38,14 +39,14 @@ namespace Metoder
 
             // Uppgift 4
 
-            
+            /*
             WriteLine("Hur många celsius är det ute?");
 
             double celsius = double.Parse(ReadLine());
             double fahrenheit = CelsiusTillFahrenheit(celsius);
 
             WriteLine($"Celsius: {celsius} -> Fahrenheit: {fahrenheit}");
-            
+            */
 
             /*
             int myNum1 = Add(3, 5);
@@ -55,6 +56,26 @@ namespace Metoder
             WriteLine($"Sum of two doubles: {myNum2}");
             WriteLine($"Sum of two floats: {myNum3}");
             */
+
+            Write("Skriv in antalet element du vill ha i din array: ");
+            int arrayLängd = int.Parse(ReadLine());
+            int[] element = new int[arrayLängd];
+            WriteLine($"Skriv in {arrayLängd} nummer:");
+
+            for (int i = 0; i < arrayLängd; i++)
+            {
+                Write($"Element {i + 1}: ");
+                element[i] = int.Parse(ReadLine());
+            }
+
+            int minsta = element.Min();
+            int största = element.Max();
+
+            WriteLine($"Det största värdet är: {största}");
+            WriteLine($"Det minsta värdet är: {minsta}");
+
+            
+
         }
         /// <summary>
         ///  :3 adderar :3
