@@ -1,4 +1,6 @@
 ﻿using static System.Console;
+using System.Linq;
+using System.Xml.Linq;
 namespace Övningsprov
 {
     internal class Program
@@ -31,7 +33,7 @@ namespace Övningsprov
             SkrivUtFrånvarnande(närvaroLista);
             SkrivUtNärvarande(närvaroLista);
 
-            SökElev(elevNamn);
+            SökElev(elevNamn, närvaroLista);
         }
 
         static string LäggTillElever()
@@ -110,16 +112,36 @@ namespace Övningsprov
             WriteLine($"Antal frånvarande elever: {frånvarande}");
         }
 
-        static void SökElev(List<string> elevNamn)
+        static void SökElev(List<string> elevNamn, List<bool> närvaroLista)
         {
-            WriteLine("Vill du söka efter en elev?");
+            WriteLine();
+            WriteLine("Vill du söka efter en elev? [j/n]");
             while (true)
             {
-                char key = ReadKey().KeyChar;
-                if (key == 'y')
+                char key = ReadKey(true).KeyChar;
+                if (key == 'j')
                 {
                     Write("Skriv in ett namn: ");
                     string sök = ReadLine();
+                    string resultat = "";
+                    for (int i = 0; i < elevNamn.Count; i++)
+                    {
+                        if (elevNamn[i].Contains(sök))
+                        {
+                            resultat = elevNamn[i];
+                            Write($"Hittade namnet: {resultat}. Hen är: ");
+
+                            if (närvaroLista[i] == true)
+                            {
+                                Write("frånvarande.");
+                            }
+                            else
+                            {
+                                Write("här.");
+                            }
+
+                        }
+                    }
                 }
                 else if (key == 'n')
                 {
