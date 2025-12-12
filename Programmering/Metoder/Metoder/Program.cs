@@ -71,11 +71,10 @@ namespace Metoder
             int minsta = element.Min();
             int största = element.Max();
 
+
+            WriteLine();
             WriteLine($"Det största värdet är: {största}");
             WriteLine($"Det minsta värdet är: {minsta}");
-
-            
-
         }
         /// <summary>
         ///  :3 adderar :3

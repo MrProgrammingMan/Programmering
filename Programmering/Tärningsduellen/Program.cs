@@ -29,11 +29,11 @@ namespace Tärningsduellen
             WriteLine("");
 
             WriteLine("Do you wish to use a 'd6' dice or 'd20' dice?");
-            diceChoice(ref isD6Chosen, ref isD20Chosen, ref chosen);
+            DiceChoice(ref isD6Chosen, ref isD20Chosen, ref chosen);
             WriteLine("");
             while (Play)
             {
-                checkBet(ref Money, ref loanAmount, ref betAmount);
+                CheckBet(ref Money, ref loanAmount, ref betAmount);
                 while (PlayerScore != 3 && ComputerScore != 3)
                 {
                     WriteLine("Player score - " + PlayerScore + ". Computer Score - " + ComputerScore);
@@ -116,24 +116,6 @@ namespace Tärningsduellen
                     }
                 }
             }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
             ReadLine();
         }
 
@@ -177,7 +159,7 @@ namespace Tärningsduellen
             }
         }
 
-        static void payLoan(ref int loanAmount, ref int Money)
+        static void PayLoan(ref int loanAmount, ref int Money)
         {
             int payBack = 0;
             WriteLine($"Please pay back your loan of {loanAmount} by typing '{loanAmount}'");
@@ -193,7 +175,7 @@ namespace Tärningsduellen
             }
         }
 
-        static void checkBet(ref int Money, ref int loanAmount, ref int betAmount)
+        static void CheckBet(ref int Money, ref int loanAmount, ref int betAmount)
         {
             if (Money > 3000)
             {
@@ -233,7 +215,7 @@ namespace Tärningsduellen
             }
         }
 
-        static void betMoney(ref int Money, ref int betAmount)
+        static void BetMoney(ref int Money, ref int betAmount)
         {
             WriteLine($"How much do you want to bet? 100, 300 or 500 kr? You currently own {Money} kr. Maximum amount you can have is 3000 kr");
             while (!int.TryParse(ReadLine(), out betAmount))
@@ -264,7 +246,7 @@ namespace Tärningsduellen
             }
         }
 
-        static void diceChoice(ref bool d6, ref bool d20, ref bool chosen)
+        static void DiceChoice(ref bool d6, ref bool d20, ref bool chosen)
         {
             while (chosen == false)
             {

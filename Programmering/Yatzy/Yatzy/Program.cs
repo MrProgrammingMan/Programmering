@@ -139,7 +139,7 @@ namespace Yatzy
         }
 
 
-        static void LåsaNummer(ref int nuvarandeRunda, ref List<int> tärningar, ref int antalLåsta, ref List<bool> låsta, Random rng, int nuvarandeKast, ref int[] poängTabell)
+        static void LåsaNummer(ref int nuvarandeRunda, ref List<int> tärningar, ref List<bool> låsta, Random rng, int nuvarandeKast, ref int[] poängTabell)
         {
             if (nuvarandeRunda <= ANTAL_RUNDOR)
             {
@@ -148,19 +148,20 @@ namespace Yatzy
 
                 if (int.TryParse(val, out int nummer) && nummer >= 1 && nummer <= 6)
                 {
+                    int låstaDennaRunda = 0;
 
                     for (int i = 0; i < ANTAL_TÄRNINGAR; i++)
                     {
                         if (tärningar[i] == nummer && !låsta[i])
                         {
                             låsta[i] = true;
-                            antalLåsta++;
+                            låstaDennaRunda++;
                         }
                     }
 
-                    if (antalLåsta > 0)
+                    if (låstaDennaRunda > 0)
                     {
-                        int poängFörDennaKategori = nummer * antalLåsta;
+                        int poängFörDennaKategori = nummer * låstaDennaRunda;
                         poängTabell[nummer - 1] = poängFörDennaKategori;
 
                         WriteColour($"Du fick {poängFörDennaKategori} poäng på {nummer}:or", ConsoleColor.Green, 2);
@@ -178,8 +179,10 @@ namespace Yatzy
                     WriteColour("Du måste skriva in ett nummer mellan 1-6 för att låsa dem", ConsoleColor.Red, 1);
                 }
             }
+
             VisaNyaTärningar(ref poängTabell);
         }
+
 
 
         static bool RollaOm(ref List<int> tärningar, ref int nuvarandeKast, Random rng, ref int antalLåsta, ref int nuvarandeRunda, ref List<bool> låsta, ref int[] poängTabell)
