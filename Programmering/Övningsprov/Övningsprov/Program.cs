@@ -30,6 +30,8 @@ namespace Övningsprov
             WriteLine();
             SkrivUtFrånvarnande(närvaroLista);
             SkrivUtNärvarande(närvaroLista);
+
+            SökElev(elevNamn);
         }
 
         static string LäggTillElever()
@@ -90,7 +92,6 @@ namespace Övningsprov
                 {
                     närvarande++;
                 }
-                i++;
             }
             WriteLine($"Antal närvarande elever: {närvarande}");
         }
@@ -101,13 +102,34 @@ namespace Övningsprov
 
             for (int i = 0; i < närvaroLista.Count; i++)
             {
-                if (närvaroLista[i] == false)
+                if (närvaroLista[i] == true)
                 {
                     frånvarande++;
                 }
-                i++;
             }
             WriteLine($"Antal frånvarande elever: {frånvarande}");
+        }
+
+        static void SökElev(List<string> elevNamn)
+        {
+            WriteLine("Vill du söka efter en elev?");
+            while (true)
+            {
+                char key = ReadKey().KeyChar;
+                if (key == 'y')
+                {
+                    Write("Skriv in ett namn: ");
+                    string sök = ReadLine();
+                }
+                else if (key == 'n')
+                {
+                    return;
+                }
+                else
+                {
+                    WriteLine("Ogiltig tangentknapp, tryck på J eller N");
+                }
+            }
         }
     }
 }
