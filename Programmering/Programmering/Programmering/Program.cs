@@ -120,7 +120,7 @@ namespace Programmering
             */
             /////////////////////////////////////////////////////////////////////////
             ///gameshow
-            /*
+            
             Random choice = new Random();
             bool tryAgain = true;
             string response = "";
@@ -269,11 +269,11 @@ namespace Programmering
                     }
                 }
             }
-            */
+            
 
             ///////////////////////////////////////////////////////////////////////////////////////
             ///uhm number guessing game
-            
+            /*
              Random random = new Random();
              bool playAgain = true;
              int min = 1;
@@ -337,7 +337,7 @@ namespace Programmering
              }
 
              WriteLine("Thanks for playing!");
-             
+             */
 
             /////////////////////////////////////////////////////////////////////////////////////////
             ///rock paper scissors

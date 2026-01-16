@@ -6,7 +6,6 @@ namespace Bet_on_black
     {
         static void Main(string[] args)
         {
-
             Random rng = new Random();
             int money = 1000;
 
@@ -18,74 +17,77 @@ namespace Bet_on_black
 
                 if (key == 'y')
                 {
-                    WriteLine($"Very excellent. Do you wish to bet on black or red? You currently own {money} bucks");
+                    WriteLine($"Very excellent. What do you want to bet on and how much? Example: red 100 or black 543. You currently own {money} bucks");
 
-                    string input = ReadLine().ToLower();
+                    string? input = ReadLine();
 
-                    if (input == "black")
+                    if (string.IsNullOrWhiteSpace(input))
                     {
-                        Gamble(ref money, rng, input);
+                        WriteLine("Invalid input.");
+                        return;
                     }
-                    else if (input == "red")
+
+                    string[] parts = input.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+
+                    string color = parts[0].ToLower();
+
+                    if (parts.Length != 2)
                     {
-                        Gamble(ref money, rng, input);
+                        WriteLine("Use format such as: red 100");
+                        continue;
+                    }
+
+                    if (color != "red" && color != "black")
+                    {
+                        WriteLine("You can only bet on 'red' or 'black'.");
+                        continue;
+                    }
+
+                    if (!int.TryParse(parts[1], out int betAmount))
+                    {
+                        WriteLine("Bet amount must be a valid number.");
+                        continue;
+                    }
+
+                    if (betAmount <= 0)
+                    {
+                        WriteLine("You must bet more than 0.");
+                        continue;
+                    }
+
+                    if (betAmount > money)
+                    {
+                        WriteLine($"You can't bet more than your current balance ({money}).");
+                        continue;
+                    }
+
+                    money -= betAmount;
+
+                    WriteLine();
+
+                    string[] colors = { "black", "red" };
+                    string winningColor = colors[rng.Next(0, 2)];
+
+                    WriteLine("Spinning the wheel...");
+                    Thread.Sleep(500);
+                    WriteLine($"The winning color is {winningColor}");
+
+                    if (color == winningColor)
+                    {
+                        money += betAmount * 2;
+                        WriteLine($"Congrats! You won and you now own {money}!");
+                    }
+                    else
+                    {
+                        WriteLine($"You lost and your new balance is {money}.");
                     }
                     WriteLine();
                 }
                 else if (key == 'n')
                 {
                     WriteLine("Disappointing. Be gone from my sight. Filth");
-                    return;
+                    break;
                 }
-            }
-        }
-       
-
-        static void Gamble(ref int money, Random rng, string input)
-        {
-            WriteLine();
-            int betAmount = 0;
-
-            WriteLine("How much do you wish to bet?");
-
-            while (true)
-            {
-                string? text = ReadLine();
-
-                if (int.TryParse(text, out betAmount))
-                {
-                    if (betAmount <= 0)
-                    {
-                        WriteLine("You must bet more than 0.");
-                    }
-                    else if (betAmount > money)
-                    {
-                        WriteLine($"You can't bet more than your current balance ({money}).");
-                    }
-                    else
-                    {
-                        WriteLine($"Successfully placed bet of {betAmount}.");
-                        money -= betAmount;
-                        break;
-                    }
-                }
-                else
-                {
-                    WriteLine("Invalid input, please enter a number to bet.");
-                }
-            }
-
-            string[] color = { "black", "red" };
-            string winningColor = color[rng.Next(0, 2)];
-
-            if (input == winningColor)
-            {
-                money += betAmount * 2;
-                WriteLine($"Congrats! You won and you now own {money}!");
-            }
-            else
-            {
-                WriteLine($"You lost and your new balance is {money}.");
             }
         }
     }

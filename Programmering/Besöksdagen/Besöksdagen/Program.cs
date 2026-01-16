@@ -35,7 +35,7 @@ namespace Besöksdagen
                     {
                         namnLista.Add(delar[0]);
 
-                        // försöker göra poängen till ett nummer, t.ex. "2.54" -> 2.54
+                        // försöker göra poängen till ett nummer, t.ex. "2.54" (string) -> 2.54 (float)
                         if (float.TryParse(delar[1].Trim(), NumberStyles.Float, nfi, out float score))
                         {
                             poäng.Add(score);
@@ -86,7 +86,7 @@ namespace Besöksdagen
                 WriteLine();
 
                 // WriteColour 'metoden' som gör det möjligt att lägga till färg OCH antalet radbrott man vill ha mellan texterna på en rad
-                // färgen och antal radbrott ser man längst åt höger i koden på varjee rad
+                // färgen och antal radbrott ser man längst åt höger i koden på varje rad
                 WriteColour("Välkommen till Reaktionspelet!", ConsoleColor.Yellow, 2);
 
                 WriteColour("Instruktioner: Tryck på ENTER när du ser ordet 'NU'. Din tid kommer vara räknad i SEKUNDER.", ConsoleColor.Cyan, 2);
@@ -186,10 +186,10 @@ namespace Besöksdagen
                             namn = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(namn.Trim().ToLower());
 
                             // sparar både namn och nummret i "resultat" genom att lägga de i en string
-                            // exempel på hur stringen kan se ut: Timmy:0.36
+                            // exempel på hur stringen kan se ut: "Timmy:0.36"
                             string resultat = $"{namn}:{nuvarandeFörsök}";
 
-                            // delar upp resultat i två delar: där split[0] = namnn och split[1] = nuvarandeFörsök
+                            // delar upp resultat i två delar: där split[0] = namn och split[1] = nuvarandeFörsök
                             // split[] betyder att vi har flera ord sparade i en lista (en array av strängar)
                             // varje ord har ett nummer, så man kan hämta dem genom t.ex split[0], split[1] osv
                             string[] split = resultat.Split(':');
