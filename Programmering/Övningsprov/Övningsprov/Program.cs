@@ -1,29 +1,26 @@
 ﻿using static System.Console;
-using System.Linq;
-using System.Xml.Linq;
 namespace Övningsprov
 {
     internal class Program
     {
         static void Main(string[] args)
         {
-            string Namn;
+            string namn;
             bool frånvarande;
             List<string> elevNamn = new List<string>();
             List<bool> närvaroLista = new List<bool>();
 
             WriteLine("Skriv in dena elevnamn! Om du vill skriva ut listan skriv 'avsluta'");
-
             while (true)
             {
-                Namn = LäggTillElever();
-                if (Namn == "avsluta")
+                namn = LäggTillElever();
+                if (namn == "avsluta")
                 {
                     break;
                 }
                 else
                 {
-                    elevNamn.Add(Namn);
+                    elevNamn.Add(namn);
                 }
                 frånvarande = RegistreraNärvaro(närvaroLista, elevNamn);
                 närvaroLista.Add(frånvarande);
@@ -34,8 +31,8 @@ namespace Övningsprov
             SkrivUtNärvarande(närvaroLista);
 
             SökElev(elevNamn, närvaroLista);
-        }
 
+        }
         static string LäggTillElever()
         {
             while (true)
@@ -139,7 +136,6 @@ namespace Övningsprov
                             {
                                 Write("här.");
                             }
-
                         }
                     }
                 }
