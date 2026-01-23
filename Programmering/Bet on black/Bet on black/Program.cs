@@ -13,7 +13,7 @@ namespace Bet_on_black
             {
                 WriteLine("Do you wish to go gambling? [Y/N]");
 
-                char key = ReadKey(true).KeyChar;
+                char key = char.ToLower(ReadKey(true).KeyChar);
 
                 if (key == 'y')
                 {
